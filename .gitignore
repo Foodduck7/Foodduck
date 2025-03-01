@@ -39,10 +39,3 @@ out/
 # Spring Boot properties 파일 제외
 src/main/resources/application.properties
 src/main/resources/application.yml
-
-# Gradle 관련 파일 제외
-build.gradle
-settings.gradle
-gradle/
-.gradle
-build/

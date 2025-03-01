@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UserRequest {
+public class UserJoinRequest {
     @NotBlank(message="이름은 필수 입력 항목이에요")
     private String name;
 

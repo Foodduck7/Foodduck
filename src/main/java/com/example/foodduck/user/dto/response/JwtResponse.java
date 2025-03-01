@@ -4,14 +4,14 @@ import lombok.Getter;
 
 @Getter
 public class JwtResponse {
-    private final String token;
-
+    private final String accessToken;
+    private final String refreshToken;
     private final Long userId;
-
     private final String email;
 
-    public JwtResponse(String token, Long userId, String email) {
-        this.token = token;
+    public JwtResponse(String accessToken, String refreshToken, Long userId, String email) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.userId = userId;
         this.email = email;
     }

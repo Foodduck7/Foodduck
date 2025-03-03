@@ -1,0 +1,76 @@
+package com.example.foodduck.order.service;
+
+import com.example.foodduck.order.Order;
+import com.example.foodduck.order.dto.request.OrderUpdateRequest;
+import com.example.foodduck.order.dto.response.OrderResponse;
+import com.example.foodduck.order.repository.OrderRepository;
+import com.example.foodduck.order.status.OrderStatus;
+import com.example.foodduck.order.status.OwnerApprovalStatus;
+import com.example.foodduck.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
+import org.springframework.stereotype.Service;
+
+/**
+ * 주문 기능 로직 실행
+ * @author 이호수
+ * @version 주문 CRUD 비즈니스 로직 구현
+ * 다른 도메인 관련 내용 주석 처리
+ * TODO 표시 내용 구현 필요
+ * 테스트 수행 필요
+*/
+@RequiredArgsConstructor
+@Service
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+
+
+    /*
+    Menu 추가 후 메서드 수정 예정
+    // 주문 생성 메서드
+    public OrderResponse createOrder(OrderCreateRequest orderCreateRequest) {
+        User foundUser = userRepository.findById(orderCreateRequest.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User Not Found"));
+        // TODO: 메뉴 조회 후 메뉴 값으로 Order 객체 생성 후 저장
+        // TODO: 가게 오픈 상태 아닐 경우 예외처리
+        // TODO: 가게 최소 주문 금액 넘지 않을 경우 예외처리
+        Order order = new Order(foundUser, foundMenu, OrderStatus.REQUESTED);
+        Order savedOrder = orderRepository.save(order);
+        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderStatus());
+    }
+    */
+
+    // 주문 조회 메서드
+    public OrderResponse findOrder(Long id) {
+        Order foundOrder = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
+        return new OrderResponse(foundOrder.getId(), foundOrder.getOrderStatus());
+    }
+
+    // 주문 상태 수정 메서드
+    // 주문 요청 -> 사장님 취소/수락 -> 수락될 경우 메뉴 상태 변경
+    public OrderResponse updateOrderState(OrderUpdateRequest orderUpdateRequest) throws BadRequestException {
+        Order foundOrder = orderRepository.findById(orderUpdateRequest.getOrderId())
+                .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
+        // 사장님 주문 취소
+        if (OwnerApprovalStatus.of(orderUpdateRequest.getOwnerApprovalStatus()).equals(OwnerApprovalStatus.REJECT)){
+            foundOrder.updateOrderState(OrderStatus.REJECTED);
+            Order savedOrder = orderRepository.save(foundOrder);
+          return new OrderResponse(savedOrder.getId(), savedOrder.getOrderStatus());
+        }
+        // 사장님 주문 수락
+        foundOrder.updateOrderState(OrderStatus.DELIVERY);
+        Order savedOrder = orderRepository.save(foundOrder);
+        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderStatus());
+    }
+
+    // 주문 취소 메서드
+    public void deleteOrder(long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
+        orderRepository.delete(order);
+    }
+}

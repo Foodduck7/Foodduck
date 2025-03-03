@@ -1,5 +1,5 @@
 /*
-    Title: Review.java
+    Title: ReviewRequest.java
     Author: yjn33
     Date: 2025/02/28
     GitHub: https://github.com/yjn33

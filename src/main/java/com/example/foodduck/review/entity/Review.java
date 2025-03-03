@@ -9,6 +9,7 @@
 
 package com.example.foodduck.review.entity;
 
+import com.example.foodduck.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,14 +21,14 @@ import java.math.BigInteger;
 @Table(name = "reviews")
 @Getter
 @NoArgsConstructor
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @Column(name = "review_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger reviewId;
+    private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "rating",nullable = false)
     private int rating;
 
 

@@ -17,13 +17,13 @@ import com.example.foodduck.review.entity.Review;
 
 public class ReviewResponse {
 
-    private final BigInteger reviewId;
+    private final Long id;
     private final int rating;
     private final String content;
 
 
     public ReviewResponse(Review review){
-        this.reviewId = review.getReviewId();
+        this.id = review.getId();
         this.rating = review.getRating();
         this.content = review.getContent();
     }

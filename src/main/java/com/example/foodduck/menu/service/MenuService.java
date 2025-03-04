@@ -5,6 +5,7 @@ import com.example.foodduck.exception.InvalidCredentialException;
 import com.example.foodduck.menu.dto.request.MenuCreateRequest;
 import com.example.foodduck.menu.dto.request.MenuUpdateRequest;
 import com.example.foodduck.menu.dto.response.MenuCreateResponse;
+import com.example.foodduck.menu.dto.response.MenuResponse;
 import com.example.foodduck.menu.dto.response.MenuUpdateResponse;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.menu.repository.MenuRepository;
@@ -16,9 +17,13 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 import static com.example.foodduck.menu.entity.MenuState.*;
 import static com.example.foodduck.user.entity.UserRole.USER;
@@ -66,6 +71,28 @@ public class MenuService {
 
         menuRepository.save(menu);
         return MenuCreateResponse.toDto(menu);
+    }
+
+    @Transactional(readOnly = true)
+    public MenuResponse getMenu(Long menuId) {
+        Menu findMenu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
+
+        return MenuResponse.toDto(findMenu);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MenuResponse> getMenus(int page, int size) {
+
+        int validPage = page <= 0 ? 1 : page;
+        Pageable pageable = PageRequest.of(validPage, size);
+        Page<Menu> pageMenus = menuRepository.findAll(pageable);
+
+        List<MenuResponse> menuList = pageMenus.getContent().stream()
+                .map(MenuResponse::toDto)
+                .toList();
+
+        return new PageImpl<>(menuList, pageable,pageMenus.getTotalElements());
     }
 
     @Transactional

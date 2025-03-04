@@ -32,7 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/users/register", "/users/login").permitAll()
                 .requestMatchers("/users/logout").authenticated()
-                .requestMatchers("/stores/**").hasAuthority("OWNER")
+                .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

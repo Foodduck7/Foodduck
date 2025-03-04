@@ -31,7 +31,7 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping("/request")
-    public ResponseEntity<OrderResponse> createOrder(@Valid OrderCreateRequest orderCreateRequest) {
+    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderCreateRequest orderCreateRequest) {
         return ResponseEntity.ok(orderService.createOrder(orderCreateRequest));
     }
 
@@ -43,7 +43,7 @@ public class OrderController {
 
     // 주문 상태 변경
     @PutMapping("/status")
-    public ResponseEntity<OrderResponse> updateOrder(@Valid OrderUpdateRequest orderUpdateRequest) throws BadRequestException {
+    public ResponseEntity<OrderResponse> updateOrder(@Valid @RequestBody OrderUpdateRequest orderUpdateRequest) throws BadRequestException {
         return ResponseEntity.ok(orderService.updateOrderState(orderUpdateRequest));
     }
 

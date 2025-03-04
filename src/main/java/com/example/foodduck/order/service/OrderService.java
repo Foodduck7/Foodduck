@@ -2,6 +2,8 @@ package com.example.foodduck.order.service;
 
 import com.example.foodduck.exception.MinimumOrderAmountException;
 import com.example.foodduck.exception.OutOfOrderTimeException;
+import com.example.foodduck.menu.entity.Menu;
+import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.order.dto.request.OrderCreateRequest;
 import com.example.foodduck.order.dto.request.OrderUpdateRequest;
 import com.example.foodduck.order.dto.response.OrderResponse;
@@ -19,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.awt.*;
 
 /**
  * 주문 기능 로직 실행
@@ -45,7 +45,8 @@ public class OrderService {
         Menu foundMenu = menuRepository.findById(orderCreateRequest.getMenuId())
                 .orElseThrow(() -> new EntityNotFoundException("Menu Not Found"));
         // 가게 오픈 상태 아닐 경우 예외처리
-        Store foundStore = storeRepository.findById(foundMenu.getStore().getId());
+        Store foundStore = storeRepository.findById(foundMenu.getStore().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Store Not Found"));
         if (foundStore.getStoreState().equals(StoreState.INACTIVE)) {
             throw new OutOfOrderTimeException("Not Currently Available For Order");
         }
@@ -90,8 +91,8 @@ public class OrderService {
     // 주문 취소 메서드
     @Transactional
     public void deleteOrder(long id) {
-        Order order = orderRepository.findById(id)
+        Order foundorder = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
-        orderRepository.delete(order);
+        foundorder.deleteOrder();
     }
 }

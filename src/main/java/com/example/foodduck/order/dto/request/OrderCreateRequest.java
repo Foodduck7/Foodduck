@@ -1,8 +1,7 @@
 package com.example.foodduck.order.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 /**
  * 주문 생성 요청 전달 DTO
@@ -11,10 +10,9 @@ import lombok.RequiredArgsConstructor;
  * getter 와 생성자를 가짐
 */
 @Getter
-@RequiredArgsConstructor
 public class OrderCreateRequest {
-    @NotBlank(message = "사용자 id값 입력은 필수입니다")
-    Long userId;
-    @NotBlank(message = "메뉴 id값 입력은 필수입니다")
-    Long menuId;
+    @NotNull(message = "사용자 id값 입력은 필수입니다")
+    private long userId;
+    @NotNull(message = "메뉴 id값 입력은 필수입니다")
+    private long menuId;
 }

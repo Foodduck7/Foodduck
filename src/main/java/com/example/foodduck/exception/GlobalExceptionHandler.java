@@ -40,4 +40,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMinimumOrderAmountException(MinimumOrderAmountException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<List<String>> handleException(MethodArgumentNotValidException ex) {
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+        List<String> fieldErrorList = fieldErrors.stream()
+                .map(FieldError::getDefaultMessage)  // 각 필드의 오류 메시지를 가져온다.
+                .toList();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorList);
+    }
 }

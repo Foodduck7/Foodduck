@@ -19,9 +19,9 @@ public class StoreController {
     private final StoreService storeService;
 
     // Create
-    @PostMapping("/stores")
+    @PostMapping("/stores/{userId}")
     public ResponseEntity<StoreResponseDto> saveStore(
-            @RequestBody Long userId,
+            @PathVariable Long userId,
             @Valid
             @RequestBody
             StoreSaveRequestDto requestDto){

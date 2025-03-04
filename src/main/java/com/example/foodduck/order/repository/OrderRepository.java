@@ -1,6 +1,6 @@
 package com.example.foodduck.order.repository;
 
-import com.example.foodduck.order.Order;
+import com.example.foodduck.order.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

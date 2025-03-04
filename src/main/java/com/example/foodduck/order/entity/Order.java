@@ -1,4 +1,4 @@
-package com.example.foodduck.order;
+package com.example.foodduck.order.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
 import com.example.foodduck.order.status.OrderStatus;

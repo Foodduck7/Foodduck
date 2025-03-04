@@ -1,10 +1,5 @@
 package com.example.foodduck.order.status;
 
-import org.apache.coyote.BadRequestException;
-
-import java.text.MessageFormat;
-import java.util.Arrays;
-
 /**
  * 주문 상태값 저장 enum
  * @author 이호수

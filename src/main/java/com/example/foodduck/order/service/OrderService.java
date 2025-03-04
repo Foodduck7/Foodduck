@@ -1,8 +1,8 @@
 package com.example.foodduck.order.service;
 
-import com.example.foodduck.order.Order;
 import com.example.foodduck.order.dto.request.OrderUpdateRequest;
 import com.example.foodduck.order.dto.response.OrderResponse;
+import com.example.foodduck.order.entity.Order;
 import com.example.foodduck.order.repository.OrderRepository;
 import com.example.foodduck.order.status.OrderStatus;
 import com.example.foodduck.order.status.OwnerApprovalStatus;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
  * @author 이호수
  * @version 주문 CRUD 비즈니스 로직 구현
  * 다른 도메인 관련 내용 주석 처리
- * TODO 표시 내용 구현 필요
  * 테스트 수행 필요
 */
 @RequiredArgsConstructor
@@ -25,18 +24,29 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-
+    //private final UserRepository userRepository;
+    //private final MenuRepository menuRepository;
+    //private final StoreRepository storeRepository;
 
     /*
-    Menu 추가 후 메서드 수정 예정
+    메서드 수정 예정
     // 주문 생성 메서드
     public OrderResponse createOrder(OrderCreateRequest orderCreateRequest) {
+        // 메뉴 조회
+        Menu foundMenu = menuRepository.findById(orderCreateRequest.getMenuId())
+                .orElseThrow(() -> new EntityNotFoundException("Menu Not Found"));
+        // 가게 오픈 상태 아닐 경우 예외처리
+        Store foundStore = storeRepository.findById(foundMenu.getStore().getId());
+        if (foundStore.getStoreState().equals(StoreState.INACTIVE)) {
+            throw new OutOfOrderTimeException("Not Currently Available For Order");
+        }
+        // 가게 최소 주문 금액 넘지 않을 경우 예외처리
+        if (foundStore.getMinOrderPrice() > foundMenu.getPrice()) {
+            throw new MinimumOrderAmountException("Minimum Order Amount Should Be More Than: " + foundStore.getMinOrderPrice());
+        }
+        // 사용자 조회
         User foundUser = userRepository.findById(orderCreateRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User Not Found"));
-        // TODO: 메뉴 조회 후 메뉴 값으로 Order 객체 생성 후 저장
-        // TODO: 가게 오픈 상태 아닐 경우 예외처리
-        // TODO: 가게 최소 주문 금액 넘지 않을 경우 예외처리
         Order order = new Order(foundUser, foundMenu, OrderStatus.REQUESTED);
         Order savedOrder = orderRepository.save(order);
         return new OrderResponse(savedOrder.getId(), savedOrder.getOrderStatus());

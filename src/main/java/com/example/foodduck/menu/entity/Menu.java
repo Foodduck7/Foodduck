@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import static com.example.foodduck.menu.entity.MenuState.ON_SALE;
+import static com.example.foodduck.menu.entity.MenuState.REMOVED;
 
 @Getter
 @Entity
@@ -49,5 +50,9 @@ public class Menu extends BaseEntity {
 
     public void updateMenuStatus(MenuState menuStatus) {
         this.menuState = menuStatus;
+    }
+
+    public void deleteMenu() {
+        this.menuState = REMOVED;
     }
 }

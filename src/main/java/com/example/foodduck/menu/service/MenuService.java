@@ -111,4 +111,33 @@ public class MenuService {
 
         return MenuUpdateResponse.toDto(findMenu);
     }
+
+    @Transactional
+    public void deleteMenu(HttpServletRequest servletRequest, Long menuId) {
+        //Http 요청에서 토큰 빼오기
+        String token = jwtUtil.parseJwt(servletRequest);
+        if (token == null) {
+            throw new InvalidCredentialException("jwt 토큰이 존재하지 않습니다.");
+        }
+
+        //유저 아이디 추출
+        Long userIdFromJwtToken = jwtUtil.getUserIdFromJwtToken(token);
+
+        User findUser = userRepository.findById(userIdFromJwtToken)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        //유저 권한 확인
+        if (findUser.getRole() == USER) {
+            throw new InvalidCredentialException("권한이 없습니다.");
+        }
+
+        Menu findMenu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
+
+        if (!findUser.getId().equals(findMenu.getStore().getOwner().getId())) {
+            throw new InvalidCredentialException("본인 가게의 메뉴만 삭제 가능합니다.");
+        }
+
+        findMenu.deleteMenu();
+    }
 }

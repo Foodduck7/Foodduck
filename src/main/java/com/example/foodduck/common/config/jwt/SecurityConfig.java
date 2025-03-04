@@ -30,9 +30,10 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/register", "/users/login").permitAll()
+                .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
                 .requestMatchers("/users/logout").authenticated()
                 .requestMatchers("/stores/**").hasAuthority("OWNER")
+                .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -13,6 +13,6 @@ public class MenuUpdateRequest {
     @PositiveOrZero
     private int price;
 
-    private String menuState;
+    private MenuState menuState;
 
 }

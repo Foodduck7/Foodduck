@@ -1,6 +1,5 @@
 package com.example.foodduck.menu.service;
 
-import com.example.foodduck.common.config.jwt.JwtUtil;
 import com.example.foodduck.exception.InvalidCredentialException;
 import com.example.foodduck.menu.dto.request.MenuCreateRequest;
 import com.example.foodduck.menu.dto.request.MenuUpdateRequest;
@@ -13,20 +12,18 @@ import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.store.repository.StoreRepository;
 import com.example.foodduck.user.entity.User;
 import com.example.foodduck.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
-import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
 import java.util.List;
 
 import static com.example.foodduck.menu.entity.MenuState.*;
-import static com.example.foodduck.user.entity.UserRole.USER;
 
 @Slf4j
 @Service
@@ -36,35 +33,19 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
-    private final JwtUtil jwtUtil;
 
     @Transactional
-    public MenuCreateResponse createMenu(HttpServletRequest servletRequest, Long storeId, MenuCreateRequest menuCreateRequest) {
+    public MenuCreateResponse createMenu(Long storeId, MenuCreateRequest menuCreateRequest) {
 
-        //Http 요청에서 토큰 빼오기
-        String token = jwtUtil.parseJwt(servletRequest);
-        if (token == null) {
-            throw new InvalidCredentialException("jwt 토큰이 존재하지 않습니다.");
-        }
-
-        //유저 아이디 추출
-        Long userIdFromJwtToken = jwtUtil.getUserIdFromJwtToken(token);
-
-        User findUser = userRepository.findById(userIdFromJwtToken)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        User findUser = getAuthenticatedUser();
 
         //가게를 찾을 수 없는 경우
         Store findStore = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
-        //유저 권한 확인
-        if (findUser.getRole() == USER) {
-            throw new InvalidCredentialException("권한이 없습니다.");
-        }
-
         //본인 가게가 아닌 경우
         if (!findUser.getId().equals(findStore.getOwner().getId())) {
-             throw new InvalidCredentialException("본인 가게에만 메뉴 등록이 가능합니다.");
+            throw new InvalidCredentialException("본인 가게에만 메뉴 등록이 가능합니다.");
         }
 
         Menu menu = new Menu(menuCreateRequest.getMenuName(), menuCreateRequest.getPrice(), new Store(storeId));
@@ -74,18 +55,11 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public MenuResponse getMenu(Long menuId) {
-        Menu findMenu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
-
-        return MenuResponse.toDto(findMenu);
-    }
-
-    @Transactional(readOnly = true)
     public Page<MenuResponse> getMenus(int page, int size) {
 
-        int validPage = page <= 0 ? 1 : page;
-        Pageable pageable = PageRequest.of(validPage, size);
+        int adjustPage = page <= 0 ? 1 : page - 1;
+
+        Pageable pageable = PageRequest.of(adjustPage, size, Sort.by("createdAt").descending());
         Page<Menu> pageMenus = menuRepository.findAll(pageable);
 
         List<MenuResponse> menuList = pageMenus.getContent().stream()
@@ -95,44 +69,43 @@ public class MenuService {
         return new PageImpl<>(menuList, pageable,pageMenus.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
+    public MenuResponse getMenu(Long menuId) {
+
+        Menu findMenu = findMenuOrElseThrow(menuId);
+
+        return MenuResponse.toDto(findMenu);
+    }
+
     @Transactional
-    public MenuUpdateResponse updateMenu(HttpServletRequest servletRequest, Long menuId, MenuUpdateRequest menuUpdateRequest) {
-        //Http 요청에서 토큰 빼오기
-        String token = jwtUtil.parseJwt(servletRequest);
-        if (token == null) {
-            throw new InvalidCredentialException("jwt 토큰이 존재하지 않습니다.");
-        }
+    public MenuUpdateResponse updateMenu(Long menuId, MenuUpdateRequest menuUpdateRequest) {
 
-        //유저 아이디 추출
-        Long userIdFromJwtToken = jwtUtil.getUserIdFromJwtToken(token);
+        User findUser = getAuthenticatedUser();
 
-        User findUser = userRepository.findById(userIdFromJwtToken)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        //유저 권한 확인
-        if (findUser.getRole() == USER) {
-            throw new InvalidCredentialException("권한이 없습니다.");
-        }
-
-        Menu findMenu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
+        Menu findMenu = findMenuOrElseThrow(menuId);
 
         if (!findUser.getId().equals(findMenu.getStore().getOwner().getId())) {
             throw new InvalidCredentialException("본인 가게의 메뉴만 수정 가능합니다.");
         }
 
+        /**
+         * (1): menuName이 입력된 경우
+         * (2): price가 입력된 경우
+         * (3): menuState가 입력되고 해당 값이 SOLD_OUT인 경우
+         * (4): menuState가 입력되고 해당 값이 ON_SALE인 경우
+         */
         if (StringUtils.hasText(menuUpdateRequest.getMenuName())) {
-            findMenu.updateMenuName(menuUpdateRequest.getMenuName());
+            findMenu.updateMenuName(menuUpdateRequest.getMenuName()); // (1)
         }
         if (findMenu.getPrice() != menuUpdateRequest.getPrice()) {
-            findMenu.updatePrice(menuUpdateRequest.getPrice());
+            findMenu.updatePrice(menuUpdateRequest.getPrice()); // (2)
         }
-        if (!findMenu.getMenuState().toString().equals(menuUpdateRequest.getMenuState())) {
-            if ("SOLD_OUT".equals(menuUpdateRequest.getMenuState())) {
-                findMenu.updateMenuStatus(SOLD_OUT);
+        if (!findMenu.getMenuState().equals(menuUpdateRequest.getMenuState())) {
+            if (SOLD_OUT.equals(menuUpdateRequest.getMenuState())) {
+                findMenu.updateMenuStatus(SOLD_OUT); // (3)
             }
-            if ("ON_SALE".equals(menuUpdateRequest.getMenuState())) {
-                findMenu.updateMenuStatus(ON_SALE);
+            if (ON_SALE.equals(menuUpdateRequest.getMenuState())) {
+                findMenu.updateMenuStatus(ON_SALE); // (4)
             }
         }
 
@@ -140,31 +113,31 @@ public class MenuService {
     }
 
     @Transactional
-    public void deleteMenu(HttpServletRequest servletRequest, Long menuId) {
-        //Http 요청에서 토큰 빼오기
-        String token = jwtUtil.parseJwt(servletRequest);
-        if (token == null) {
-            throw new InvalidCredentialException("jwt 토큰이 존재하지 않습니다.");
-        }
+    public void deleteMenu(Long menuId) {
 
-        //유저 아이디 추출
-        Long userIdFromJwtToken = jwtUtil.getUserIdFromJwtToken(token);
+        User findUser = getAuthenticatedUser();
 
-        User findUser = userRepository.findById(userIdFromJwtToken)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        //유저 권한 확인
-        if (findUser.getRole() == USER) {
-            throw new InvalidCredentialException("권한이 없습니다.");
-        }
-
-        Menu findMenu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
+        Menu findMenu = findMenuOrElseThrow(menuId);
 
         if (!findUser.getId().equals(findMenu.getStore().getOwner().getId())) {
             throw new InvalidCredentialException("본인 가게의 메뉴만 삭제 가능합니다.");
         }
 
         findMenu.deleteMenu();
+    }
+
+    private Menu findMenuOrElseThrow(Long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
+    }
+
+    private User getAuthenticatedUser() {
+        //로그인한 유저 정보 추출
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = (UserDetails)principal;
+        String email = userDetails.getUsername();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
 }

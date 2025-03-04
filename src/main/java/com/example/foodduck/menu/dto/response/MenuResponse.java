@@ -32,6 +32,7 @@ public class MenuResponse {
         this.updatedAt = updatedAt;
     }
 
+    //TODO: Builder로 변경
     public static MenuResponse toDto(Menu menu) {
         return new MenuResponse (
                 menu.getId(),

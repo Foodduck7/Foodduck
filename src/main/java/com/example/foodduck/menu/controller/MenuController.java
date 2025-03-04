@@ -6,7 +6,6 @@ import com.example.foodduck.menu.dto.response.MenuCreateResponse;
 import com.example.foodduck.menu.dto.response.MenuResponse;
 import com.example.foodduck.menu.dto.response.MenuUpdateResponse;
 import com.example.foodduck.menu.service.MenuService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,11 +22,9 @@ public class MenuController {
     @PostMapping("/menus/{storeId}")
     public ResponseEntity<MenuCreateResponse> createMenu(
             @PathVariable Long storeId,
-            @Valid @RequestBody MenuCreateRequest menuCreateRequest,
-            HttpServletRequest servletRequest
+            @Valid @RequestBody MenuCreateRequest menuCreateRequest
     ) {
-
-        return new ResponseEntity<>(menuService.createMenu(servletRequest, storeId, menuCreateRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(menuService.createMenu(storeId, menuCreateRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/menus")
@@ -47,18 +44,14 @@ public class MenuController {
     @PatchMapping("/menus/{menuId}/update")
     public ResponseEntity<MenuUpdateResponse> updateMenu(
             @PathVariable Long menuId,
-            @Valid @RequestBody MenuUpdateRequest menuUpdateRequest,
-            HttpServletRequest servletRequest
+            @Valid @RequestBody MenuUpdateRequest menuUpdateRequest
     ) {
-        return new ResponseEntity<>(menuService.updateMenu(servletRequest, menuId, menuUpdateRequest), HttpStatus.OK);
+        return new ResponseEntity<>(menuService.updateMenu(menuId, menuUpdateRequest), HttpStatus.OK);
     }
 
     @DeleteMapping("/menus/{menuId}/delete")
-    public ResponseEntity<Void> deleteMenu(
-            @PathVariable Long menuId,
-            HttpServletRequest servletRequest
-    ) {
-        menuService.deleteMenu(servletRequest, menuId);
+    public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
+        menuService.deleteMenu(menuId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

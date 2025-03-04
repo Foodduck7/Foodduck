@@ -11,7 +11,6 @@ import java.awt.*;
 
 /**
  * 주문 정보를 저장하는 entity
- *
  * @author 이호수
  * @version 주문 id, 메뉴, 사용자, 주문 상태를 필드로 가짐
  * getter 와 기본 생성자를 가짐
@@ -48,6 +47,12 @@ public class Order extends BaseEntity {
     // 주문 상태 업데이트 메서드
     public void updateOrderState(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    // 주문 soft delete
+    // 주문 상태 삭제됨으로 업데이트
+    public void deleteOrder() {
+        this.orderStatus = OrderStatus.REMOVED;
     }
 
 }

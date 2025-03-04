@@ -90,8 +90,8 @@ public class OrderService {
     // 주문 취소 메서드
     @Transactional
     public void deleteOrder(long id) {
-        Order order = orderRepository.findById(id)
+        Order foundorder = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
-        orderRepository.delete(order);
+        foundorder.deleteOrder();
     }
 }

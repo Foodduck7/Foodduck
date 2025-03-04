@@ -3,6 +3,7 @@ package com.example.foodduck.menu.entity;
 import com.example.foodduck.common.entity.BaseEntity;
 import com.example.foodduck.store.entity.Store;
 import jakarta.persistence.*;
+
 import lombok.Getter;
 
 import static com.example.foodduck.menu.entity.MenuState.ON_SALE;
@@ -36,5 +37,17 @@ public class Menu extends BaseEntity {
         this.price = price;
         this.menuState = ON_SALE;
         this.store = store;
+    }
+
+    public void updateMenuName(String menuName) {
+        this.menuName = menuName;
+    }
+
+    public void updatePrice(int price) {
+        this.price = price;
+    }
+
+    public void updateMenuStatus(MenuState menuStatus) {
+        this.menuState = menuStatus;
     }
 }

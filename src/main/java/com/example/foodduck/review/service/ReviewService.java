@@ -16,6 +16,10 @@ import com.example.foodduck.review.entity.Review;
 import com.example.foodduck.review.repository.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 
@@ -26,7 +30,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-
+    /* // 단건 조회 기능 불가
     public ReviewResponse findReviewById(Long id){
         Review findReview = reviewRepository.findReviewById(id).orElseThrow(
                 () -> new EntityNotFoundException("해당"+ id +"값의 리뷰를 찾지 못하였습니다")
@@ -34,6 +38,12 @@ public class ReviewService {
 
         return new ReviewResponse(findReview);
     }
+    */
+
+
+
+
+
 
 
 

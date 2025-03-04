@@ -1,6 +1,7 @@
 
 package com.example.foodduck.order.controller;
 
+import com.example.foodduck.order.dto.request.OrderCreateRequest;
 import com.example.foodduck.order.dto.request.OrderUpdateRequest;
 import com.example.foodduck.order.dto.response.OrderResponse;
 import com.example.foodduck.order.service.OrderService;
@@ -28,14 +29,11 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    /*
-    메뉴 부분 추가 후 수정 예정
     // 주문 생성
     @PostMapping("/request")
     public ResponseEntity<OrderResponse> createOrder(@Valid OrderCreateRequest orderCreateRequest) {
         return ResponseEntity.ok(orderService.createOrder(orderCreateRequest));
     }
-    */
 
     // 주문 조회
     @GetMapping("/{id}")

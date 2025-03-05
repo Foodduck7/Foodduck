@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .requestMatchers("/users/register", "/users/login", "menus/{menuId}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/stores/{storeId}/menus").permitAll()
                 .requestMatchers("/users/logout").authenticated()
-                .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
+                .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
                 .requestMatchers(
                         "/menus/{storeid}",
                         "/menus/{menuId}/update",
@@ -43,7 +43,7 @@ public class SecurityConfig {
                         "/menus/options/{optionId}/update",
                         "/menus/options/{optionId}/delete"
                 ).hasAuthority("ROLE_OWNER")
-                .requestMatchers("/orders/request").hasRole("USER")
+                    .requestMatchers("/orders/request").hasRole("USER")
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

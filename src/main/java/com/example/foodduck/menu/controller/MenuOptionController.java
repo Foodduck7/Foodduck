@@ -1,15 +1,14 @@
 package com.example.foodduck.menu.controller;
 
 import com.example.foodduck.menu.dto.request.MenuOptionCreateRequest;
+import com.example.foodduck.menu.dto.request.MenuOptionUpdateRequest;
+import com.example.foodduck.menu.dto.response.MenuOptionUpdateResponse;
 import com.example.foodduck.menu.dto.response.MenuOptionCreateResponse;
 import com.example.foodduck.menu.service.MenuOptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +22,14 @@ public class MenuOptionController {
     ) {
         return ResponseEntity.ok(menuOptionService.createMenuOption(menuId, menuOptionCreateRequest));
     }
+
+    @PatchMapping("/menus/options/{optionId}/option-update")
+    public ResponseEntity<MenuOptionUpdateResponse> updateMenuOption (
+            @PathVariable Long optionId,
+            @Valid @RequestBody MenuOptionUpdateRequest menuOptionUpdateRequest
+    ) {
+        return ResponseEntity.ok(menuOptionService.updateMenuOption(optionId, menuOptionUpdateRequest));
+    }
+
 
 }

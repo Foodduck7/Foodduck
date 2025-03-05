@@ -2,6 +2,8 @@ package com.example.foodduck.menu.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
@@ -36,5 +38,22 @@ public class MenuOption extends BaseEntity {
         this.optionPrice = optionPrice;
         this.optionStatus = OptionStatus.ON_SALE;
         this.menu = menu;
+    }
+
+    public void updateMenuOption(String optionName) {
+        this.optionName = optionName;
+    }
+
+    public void updateMenuOptionContents(String contents) {
+        this.contents = contents;
+    }
+
+    public void updateMenuOptionPrice(int optionPrice) {
+        this.optionPrice = optionPrice;
+    }
+
+    public void updateOptionStatus(OptionStatus optionStatus) {
+        this.optionStatus = optionStatus;
+
     }
 }

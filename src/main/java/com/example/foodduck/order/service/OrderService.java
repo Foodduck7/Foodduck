@@ -26,8 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
  * 주문 기능 로직 실행
  * @author 이호수
  * @version 주문 CRUD 비즈니스 로직 구현
- * 다른 도메인 관련 내용 주석 처리
- * 테스트 수행 필요
  */
 @RequiredArgsConstructor
 @Service
@@ -45,7 +43,7 @@ public class OrderService {
         Menu foundMenu = menuRepository.findById(orderCreateRequest.getMenuId())
                 .orElseThrow(() -> new EntityNotFoundException("Menu Not Found"));
         // 가게 오픈 상태 아닐 경우 예외처리
-        Store foundStore = storeRepository.findById(foundMenu.getStore().getId())
+        Store foundStore = storeRepository.findById(orderCreateRequest.getStoreId())
                 .orElseThrow(() -> new EntityNotFoundException("Store Not Found"));
         if (foundStore.getStoreState().equals(StoreState.INACTIVE)) {
             throw new OutOfOrderTimeException("Not Currently Available For Order");
@@ -57,9 +55,9 @@ public class OrderService {
         // 사용자 조회
         User foundUser = userRepository.findById(orderCreateRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User Not Found"));
-        Order order = new Order(foundUser, foundMenu, OrderStatus.REQUESTED);
+        Order order = new Order(foundUser, foundMenu, foundStore, OrderStatus.REQUESTED);
         Order savedOrder = orderRepository.save(order);
-        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderStatus());
+        return new OrderResponse(savedOrder.getId(), foundStore.getId(), savedOrder.getOrderStatus());
     }
 
     // 주문 조회 메서드
@@ -67,7 +65,7 @@ public class OrderService {
     public OrderResponse findOrder(Long id) {
         Order foundOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
-        return new OrderResponse(foundOrder.getId(), foundOrder.getOrderStatus());
+        return new OrderResponse(foundOrder.getId(), foundOrder.getStore().getId(), foundOrder.getOrderStatus());
     }
 
     // 주문 상태 수정 메서드
@@ -80,12 +78,12 @@ public class OrderService {
         if (OwnerApprovalStatus.of(orderUpdateRequest.getOwnerApprovalStatus()).equals(OwnerApprovalStatus.REJECT)) {
             foundOrder.updateOrderState(OrderStatus.REJECTED);
             Order savedOrder = orderRepository.save(foundOrder);
-            return new OrderResponse(savedOrder.getId(), savedOrder.getOrderStatus());
+            return new OrderResponse(savedOrder.getId(), savedOrder.getStore().getId(), savedOrder.getOrderStatus());
         }
         // 사장님 주문 수락
         foundOrder.updateOrderState(OrderStatus.DELIVERY);
         Order savedOrder = orderRepository.save(foundOrder);
-        return new OrderResponse(savedOrder.getId(), savedOrder.getOrderStatus());
+        return new OrderResponse(savedOrder.getId(), savedOrder.getStore().getId(), savedOrder.getOrderStatus());
     }
 
     // 주문 취소 메서드

@@ -3,6 +3,7 @@ package com.example.foodduck.order.entity;
 import com.example.foodduck.common.entity.BaseEntity;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.order.status.OrderStatus;
+import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,21 +26,26 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
+
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     // 주문 상태: 기본값 요청 상태
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.REQUESTED;
 
-    public Order(User user, Menu menu, OrderStatus orderStatus) {
+    public Order(User user, Menu menu, Store store, OrderStatus orderStatus) {
         this.user = user;
         this.menu = menu;
+        this.store = store;
         this.orderStatus = orderStatus;
     }
 

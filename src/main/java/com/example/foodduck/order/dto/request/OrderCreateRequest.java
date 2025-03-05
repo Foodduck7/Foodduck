@@ -15,4 +15,6 @@ public class OrderCreateRequest {
     private long userId;
     @NotNull(message = "메뉴 id값 입력은 필수입니다")
     private long menuId;
+    @NotNull(message = "가게 id값 입력은 필수입니다")
+    private long storeId;
 }

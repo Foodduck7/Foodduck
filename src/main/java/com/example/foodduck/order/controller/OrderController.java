@@ -17,10 +17,6 @@ import org.springframework.web.bind.annotation.*;
  * 주문 기능 제어 기능 수행
  * @author 이호수
  * @version 주문 CRUD 기능 구현
- * 다른 도메인 관련 내용 주석 처리
- * 사장님 주문 수락/최소 기능 구현 필요
- * 예외사항 처리 구현 필요
- * 테스트 수행 필요
  */
 @RequiredArgsConstructor
 @Controller
@@ -31,6 +27,7 @@ public class OrderController {
 
     // 주문 생성
     @PostMapping("/request")
+    @ResponseBody
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderCreateRequest orderCreateRequest) {
         return ResponseEntity.ok(orderService.createOrder(orderCreateRequest));
     }
@@ -43,6 +40,7 @@ public class OrderController {
 
     // 주문 상태 변경
     @PutMapping("/status")
+    @ResponseBody
     public ResponseEntity<OrderResponse> updateOrder(@Valid @RequestBody OrderUpdateRequest orderUpdateRequest) throws BadRequestException {
         return ResponseEntity.ok(orderService.updateOrderState(orderUpdateRequest));
     }

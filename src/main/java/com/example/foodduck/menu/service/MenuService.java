@@ -48,7 +48,7 @@ public class MenuService {
             throw new InvalidCredentialException("본인 가게에만 메뉴 등록이 가능합니다.");
         }
 
-        Menu menu = new Menu(menuCreateRequest.getMenuName(), menuCreateRequest.getPrice(), new Store(storeId));
+        Menu menu = new Menu(menuCreateRequest.getMenuName(), menuCreateRequest.getPrice(), menuCreateRequest.getCategory(), new Store(storeId));
 
         menuRepository.save(menu);
         return MenuCreateResponse.toDto(menu);

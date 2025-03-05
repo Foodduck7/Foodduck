@@ -22,6 +22,8 @@ public class Menu extends BaseEntity {
 
     private int price;
 
+    private String category;
+
     @Enumerated(EnumType.STRING)
     private MenuState menuState;
 
@@ -33,9 +35,10 @@ public class Menu extends BaseEntity {
 
     }
 
-    public Menu(String menuName, int price, Store store) {
+    public Menu(String menuName, int price, String category, Store store) {
         this.menuName = menuName;
         this.price = price;
+        this.category = category;
         this.menuState = ON_SALE;
         this.store = store;
     }

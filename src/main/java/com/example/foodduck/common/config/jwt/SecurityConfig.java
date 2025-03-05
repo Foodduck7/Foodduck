@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/stores/{storeId}/menus").permitAll()
                 .requestMatchers("/users/logout").authenticated()
                 .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
-                .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
+                .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete", "/menus/{menuId}/options").hasAuthority("ROLE_OWNER")
                 .requestMatchers("/orders/request").hasRole("USER")
                 .anyRequest().authenticated()
             )

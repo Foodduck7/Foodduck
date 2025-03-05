@@ -135,12 +135,12 @@ public class MenuService {
         findMenu.deleteMenu();
     }
 
-    private Menu findMenuOrElseThrow(Long menuId) {
+    public Menu findMenuOrElseThrow(Long menuId) {
         return menuRepository.findById(menuId)
                 .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다."));
     }
 
-    private User getAuthenticatedUser() {
+    public User getAuthenticatedUser() {
         //로그인한 유저 정보 추출
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserDetails userDetails = (UserDetails)principal;

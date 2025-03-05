@@ -35,6 +35,10 @@ public class Menu extends BaseEntity {
 
     }
 
+    public Menu(Long menuId) {
+        this.id = menuId;
+    }
+
     public Menu(String menuName, int price, String category, Store store) {
         this.menuName = menuName;
         this.price = price;

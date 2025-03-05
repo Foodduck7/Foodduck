@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class StoreWithMenusResponseDto {
+public class StoreDetailResponseDto {
 
     private final Long id;
     private final UserResponse owner;
@@ -25,10 +25,10 @@ public class StoreWithMenusResponseDto {
     private final int likeCount;
     private final int orderCount;
     private final StoreState storeState;
-    private String noticeContent;
+    private final String noticeContent;
     private final List<MenuResponse> menus;
 
-    public StoreWithMenusResponseDto(Store store, List<Menu> menus) {
+    public StoreDetailResponseDto(Store store, List<Menu> menus) {
         this.id = store.getId();
         this.owner = new UserResponse(store.getOwner());
         this.name = store.getName();

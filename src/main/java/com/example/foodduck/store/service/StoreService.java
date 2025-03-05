@@ -3,9 +3,11 @@ package com.example.foodduck.store.service;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.store.dto.request.StoreSaveRequestDto;
+import com.example.foodduck.store.dto.request.StoreUpdateRequestDto;
 import com.example.foodduck.store.dto.response.NoticeUpdateResponseDto;
 import com.example.foodduck.store.dto.response.StoreResponseDto;
-import com.example.foodduck.store.dto.response.StoreWithMenusResponseDto;
+import com.example.foodduck.store.dto.response.StoreSaveResponseDto;
+import com.example.foodduck.store.dto.response.StoreDetailResponseDto;
 import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.store.repository.StoreRepository;
 import com.example.foodduck.user.entity.User;
@@ -28,7 +30,7 @@ public class StoreService {
 
     // Create
     @Transactional
-    public StoreResponseDto save(Long userId, StoreSaveRequestDto dto) {
+    public StoreSaveResponseDto save(Long userId, StoreSaveRequestDto dto) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
@@ -46,17 +48,17 @@ public class StoreService {
         );
         storeRepository.save(store);
 
-        return new StoreResponseDto(store);
+        return new StoreSaveResponseDto(store);
     }
 
     // Read
     @Transactional(readOnly = true)
-    public StoreWithMenusResponseDto findById(Long storeId) {
+    public StoreDetailResponseDto findById(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다."));
         List<Menu> menus = menuRepository.findByStore(store);
 
-        return new StoreWithMenusResponseDto(store, menus);
+        return new StoreDetailResponseDto(store, menus);
     }
 
     @Transactional(readOnly = true)
@@ -69,7 +71,7 @@ public class StoreService {
 
     // Update
     @Transactional
-    public StoreResponseDto update(Long storeId, Long userId, StoreSaveRequestDto dto) {
+    public StoreResponseDto update(Long storeId, Long userId, StoreUpdateRequestDto dto) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다."));
 
@@ -82,6 +84,7 @@ public class StoreService {
         return new StoreResponseDto(store);
     }
 
+    // noticeUpdate
     @Transactional
     public NoticeUpdateResponseDto updateNotice(Long storeId, Long userId, String noticeContent) {
         Store store = storeRepository.findById(storeId)

@@ -1,6 +1,8 @@
 package com.example.foodduck.store.controller;
 
+import com.example.foodduck.store.dto.request.NoticeUpdateRequestDto;
 import com.example.foodduck.store.dto.request.StoreSaveRequestDto;
+import com.example.foodduck.store.dto.response.NoticeUpdateResponseDto;
 import com.example.foodduck.store.dto.response.StoreResponseDto;
 import com.example.foodduck.store.dto.response.StoreWithMenusResponseDto;
 import com.example.foodduck.store.repository.StoreRepository;
@@ -51,6 +53,14 @@ public class StoreController {
             @Valid @RequestBody StoreSaveRequestDto requestDto) {
 
         return ResponseEntity.ok(storeService.update(storeId, userId, requestDto));
+    }
+
+    @PatchMapping("/stores/{storeId}/notice")
+    public ResponseEntity<NoticeUpdateResponseDto> updateStoreNotice(
+            @PathVariable Long storeId,
+            @RequestParam Long userId,
+            @Valid @RequestBody NoticeUpdateRequestDto requestDto) {
+        return ResponseEntity.ok(storeService.updateNotice(storeId, userId, requestDto.getNoticeContent()));
     }
 
     // Delete

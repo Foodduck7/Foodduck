@@ -3,6 +3,7 @@ package com.example.foodduck.store.service;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.store.dto.request.StoreSaveRequestDto;
+import com.example.foodduck.store.dto.response.NoticeUpdateResponseDto;
 import com.example.foodduck.store.dto.response.StoreResponseDto;
 import com.example.foodduck.store.dto.response.StoreWithMenusResponseDto;
 import com.example.foodduck.store.entity.Store;
@@ -10,7 +11,6 @@ import com.example.foodduck.store.repository.StoreRepository;
 import com.example.foodduck.user.entity.User;
 import com.example.foodduck.user.entity.UserRole;
 import com.example.foodduck.user.repository.UserRepository;
-import com.example.foodduck.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,6 @@ public class StoreService {
     public StoreWithMenusResponseDto findById(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다."));
-        // 가게 단건 조회시 메뉴 가져오기
         List<Menu> menus = menuRepository.findByStore(store);
 
         return new StoreWithMenusResponseDto(store, menus);
@@ -74,7 +73,6 @@ public class StoreService {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다."));
 
-        // 권한 체크 (가게 주인만 수정 가능)
         if (!store.getOwner().getId().equals(userId)) {
             throw new IllegalArgumentException("가게 주인만 가게 정보를 수정할 수 있습니다.");
         }
@@ -84,13 +82,27 @@ public class StoreService {
         return new StoreResponseDto(store);
     }
 
+    @Transactional
+    public NoticeUpdateResponseDto updateNotice(Long storeId, Long userId, String noticeContent) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다."));
+
+        if (!store.getOwner().getId().equals(userId)) {
+            throw new IllegalArgumentException("가게 주인만 공지사항을 수정할 수 있습니다.");
+        }
+
+        store.updateNoticeContent(noticeContent);
+
+        return new NoticeUpdateResponseDto(store.getId(), store.getNoticeContent());
+    }
+
+
     // Delete
     @Transactional
     public void delete(Long storeId, Long userId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다."));
 
-        // 권한 체크 (가게 주인만 삭제 가능)
         if (!store.getOwner().getId().equals(userId)) {
             throw new IllegalArgumentException("가게 주인만 삭제할 수 있습니다.");
         }

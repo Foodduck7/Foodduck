@@ -25,6 +25,7 @@ public class StoreWithMenusResponseDto {
     private final int likeCount;
     private final int orderCount;
     private final StoreState storeState;
+    private String noticeContent;
     private final List<MenuResponse> menus;
 
     public StoreWithMenusResponseDto(Store store, List<Menu> menus) {
@@ -38,6 +39,7 @@ public class StoreWithMenusResponseDto {
         this.likeCount = store.getLikeCount();
         this.orderCount = store.getOrderCount();
         this.storeState = store.getStoreState();
+        this.noticeContent = store.getNoticeContent();
         this.menus = menus.stream()
                 .map(MenuResponse::toDto)
                 .collect(Collectors.toList());

@@ -39,7 +39,6 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private BreakState breakState;
 
-    // setter
     @Setter
     @Column(nullable = false)
     private int likeCount = 0;
@@ -50,6 +49,9 @@ public class Store extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StoreState storeState = StoreState.ACTIVE;
+
+    @Column(name = "notice_content", length=2000)
+    private String noticeContent;
 
     public Store(User owner, String name, int minOrderPrice, LocalTime openTime, LocalTime closeTime, BreakState breakState) {
         this.owner = owner;
@@ -75,4 +77,7 @@ public class Store extends BaseEntity {
         this.breakState = breakState;
     }
 
+    public void updateNoticeContent(String noticeContent) {
+        this.noticeContent = noticeContent;
+    }
 }

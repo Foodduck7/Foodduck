@@ -38,6 +38,11 @@ public class StoreService {
             throw new IllegalArgumentException("가게는 OWNER 권한을 가진 사용자만 생성할 수 있습니다.");
         }
 
+        List<Store> ownerStores = storeRepository.findByOwner(owner);
+        if (ownerStores.size() >= 3) {
+            throw new IllegalArgumentException("사장님은 최대 3개의 가게만 운영할 수 있습니다.");
+        }
+
         Store store = new Store(
                 owner,
                 dto.getName(),
@@ -98,7 +103,6 @@ public class StoreService {
 
         return new NoticeUpdateResponseDto(store.getId(), store.getNoticeContent());
     }
-
 
     // Delete
     @Transactional

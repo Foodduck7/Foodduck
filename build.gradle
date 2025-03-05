@@ -50,6 +50,7 @@ dependencies {
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     // 테스트
     testImplementation platform('org.junit:junit-bom:5.9.1')

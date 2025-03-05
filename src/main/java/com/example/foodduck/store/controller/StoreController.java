@@ -6,8 +6,6 @@ import com.example.foodduck.store.dto.request.StoreUpdateRequestDto;
 import com.example.foodduck.store.dto.response.NoticeUpdateResponseDto;
 import com.example.foodduck.store.dto.response.StoreResponseDto;
 import com.example.foodduck.store.dto.response.StoreSaveResponseDto;
-import com.example.foodduck.store.dto.response.StoreDetailResponseDto;
-import com.example.foodduck.store.repository.StoreRepository;
 import com.example.foodduck.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class StoreController {
 
-    private final StoreRepository storeRepository;
     private final StoreService storeService;
 
     // Create
@@ -37,16 +32,11 @@ public class StoreController {
     }
 
     // Reade
-    // One
-    @GetMapping("/stores/{storeId}")
-    public ResponseEntity<StoreDetailResponseDto> getStore(@PathVariable Long storeId) {
-        StoreDetailResponseDto dto = storeService.findById(storeId);
-        return ResponseEntity.ok(dto);
-    }
-    // All
+    // 단건 : ? -> StoreDetailResponseDto
+    // 다건 : ? -> StoreSimpleResponseDto
     @GetMapping("/stores")
-    public ResponseEntity<List<StoreResponseDto>> getAllStores() {
-        return ResponseEntity.ok(storeService.findAll());
+    public ResponseEntity<?> getStores(@RequestParam String name) {
+        return ResponseEntity.ok(storeService.searchStoresByName(name));
     }
 
     // Update

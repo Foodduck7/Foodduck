@@ -23,7 +23,7 @@ public class MenuOptionController {
         return ResponseEntity.ok(menuOptionService.createMenuOption(menuId, menuOptionCreateRequest));
     }
 
-    @PatchMapping("/menus/options/{optionId}/option-update")
+    @PatchMapping("/menus/options/{optionId}/update")
     public ResponseEntity<MenuOptionUpdateResponse> updateMenuOption (
             @PathVariable Long optionId,
             @Valid @RequestBody MenuOptionUpdateRequest menuOptionUpdateRequest

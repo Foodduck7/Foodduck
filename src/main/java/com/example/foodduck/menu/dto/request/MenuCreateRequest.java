@@ -4,11 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class MenuCreateRequest {
 
     @NotBlank(message = "메뉴 이름을 입력해 주세요.")

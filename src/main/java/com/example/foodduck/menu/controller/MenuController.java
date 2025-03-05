@@ -18,7 +18,7 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    @PostMapping("stores/{storeId}/menus")
+    @PostMapping("/stores/{storeId}/menus")
     public ResponseEntity<MenuCreateResponse> createMenu(
             @PathVariable Long storeId,
             @Valid @RequestBody MenuCreateRequest menuCreateRequest
@@ -26,7 +26,7 @@ public class MenuController {
         return ResponseEntity.ok(menuService.createMenu(storeId, menuCreateRequest));
     }
 
-    @GetMapping("stores/{storeId}/menus")
+    @GetMapping("/stores/{storeId}/menus")
     public ResponseEntity<Page<MenuResponse>> getMenus(
             @PathVariable Long storeId,
             @RequestParam (defaultValue = "1") int page,

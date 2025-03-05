@@ -48,6 +48,7 @@ public class MenuService {
             throw new InvalidCredentialException("본인 가게에만 메뉴 등록이 가능합니다.");
         }
 
+        //이미 메뉴가 존재하는 경우
         if (menuRepository.existsByMenuName(menuCreateRequest.getMenuName())) {
             throw new IllegalArgumentException("이미 존재하는 메뉴입니다.");
         }
@@ -58,7 +59,7 @@ public class MenuService {
         return MenuCreateResponse.toDto(menu);
     }
 
-    //TODO: 정렬 기준 추가하기 (리뷰 순, 주문 순)
+
     @Transactional(readOnly = true)
     public Page<MenuResponse> getMenus(Long storeId, int page, int size, String menuName, String category, String sortCondition) {
 

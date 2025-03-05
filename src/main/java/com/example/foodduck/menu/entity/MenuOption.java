@@ -2,13 +2,13 @@ package com.example.foodduck.menu.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "menu_options")
+@NoArgsConstructor
 public class MenuOption extends BaseEntity {
 
     @Id
@@ -27,10 +27,6 @@ public class MenuOption extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
-
-    public MenuOption() {
-
-    }
 
     public MenuOption(String optionName, String contents, int optionPrice, Menu menu) {
         this.optionName = optionName;
@@ -56,7 +52,7 @@ public class MenuOption extends BaseEntity {
         this.optionStatus = optionStatus;
     }
 
-    public void deleteMenuOption(OptionStatus optionStatus) {
-        this.optionStatus = optionStatus;
+    public void deleteMenuOption() {
+        this.optionStatus = OptionStatus.REMOVED;
     }
 }

@@ -5,6 +5,7 @@ import com.example.foodduck.store.entity.Store;
 import jakarta.persistence.*;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static com.example.foodduck.menu.entity.MenuState.ON_SALE;
 import static com.example.foodduck.menu.entity.MenuState.REMOVED;
@@ -12,6 +13,7 @@ import static com.example.foodduck.menu.entity.MenuState.REMOVED;
 @Getter
 @Entity
 @Table(name = "menus")
+@NoArgsConstructor
 public class Menu extends BaseEntity {
 
     @Id
@@ -30,10 +32,6 @@ public class Menu extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
-
-    public Menu() {
-
-    }
 
     public Menu(Long menuId) {
         this.id = menuId;

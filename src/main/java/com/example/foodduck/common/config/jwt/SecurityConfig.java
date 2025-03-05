@@ -34,8 +34,15 @@ public class SecurityConfig {
                 .requestMatchers("/users/register", "/users/login", "menus/{menuId}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/stores/{storeId}/menus").permitAll()
                 .requestMatchers("/users/logout").authenticated()
-                .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER") //TODO 경로 깔끔하게 변경
-                .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete", "/menus/{menuId}/options", "/menus/options/{optionId}/option-update","menus/options/{optionId}/delete" ).hasAuthority("ROLE_OWNER")
+                .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
+                .requestMatchers(
+                        "/menus/{storeid}",
+                        "/menus/{menuId}/update",
+                        "/menus/{menuId}/delete",
+                        "/menus/{menuId}/options",
+                        "/menus/options/{optionId}/update",
+                        "/menus/options/{optionId}/delete"
+                ).hasAuthority("ROLE_OWNER")
                 .requestMatchers("/orders/request").hasRole("USER")
                 .anyRequest().authenticated()
             )

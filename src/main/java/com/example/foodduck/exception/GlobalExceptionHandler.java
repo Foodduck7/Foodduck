@@ -49,12 +49,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    // Param을 통해 입력된 값이 올바르지 않을 때에 대한 예외처리: 400
-    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
-    public ResponseEntity<String> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 조건이 올바르지 않습니다. 확인 후 다시 시도해주세요.");
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handleException(MethodArgumentNotValidException ex) {
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();

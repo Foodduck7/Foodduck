@@ -15,7 +15,7 @@ public class MenuOptionUpdateRequest {
     private String contents;
 
     @PositiveOrZero
-    private int price;
+    private int optionPrice;
 
     private OptionStatus optionStatus;
 }

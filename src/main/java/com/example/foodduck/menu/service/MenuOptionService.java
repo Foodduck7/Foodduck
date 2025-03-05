@@ -41,7 +41,7 @@ public class MenuOptionService {
         MenuOption savedMenuOption = menuOptionRepository.save(new MenuOption(
                 menuOptionCreateRequest.getOptionName(),
                 menuOptionCreateRequest.getContents(),
-                menuOptionCreateRequest.getPrice(),
+                menuOptionCreateRequest.getOptionPrice(),
                 new Menu(menuId))
         );
 
@@ -57,26 +57,28 @@ public class MenuOptionService {
 
         Menu findMenu = menuService.findMenuOrElseThrow(findMenuOption.getMenu().getId());
 
-        //본인 가게의 메뉴 옵션만 수정 가능
-        if (!findUser.getId().equals(findMenu.getStore().getOwner().getId())) {
-            throw new InvalidCredentialException("본인 가게의 메뉴 옵션만 수정할 수 있습니다.");
-        }
-
+        /**
+         * (1): option이 입력되지 않은 경우
+         * (2): contents가 입력되지 않은 경우
+         * (3): optionPrice가 입력되었고 변경된 경우
+         * (4): optionStatus가 입력되고 해당 값이 SOLD_OUT인 경우
+         * (5): optionStatus가 입력되고 해당 값이 ON_SALE인 경우
+         */
         if (!StringUtils.hasText(menuOptionUpdateRequest.getOption())) {
-            findMenuOption.updateMenuOption(menuOptionUpdateRequest.getOption()); //TODO:  변수명 다 바꾸기
+            findMenuOption.updateMenuOption(menuOptionUpdateRequest.getOption()); // (1)
         }
         if (!StringUtils.hasText(menuOptionUpdateRequest.getContents())) {
-            findMenuOption.updateMenuOptionContents(menuOptionUpdateRequest.getContents());
+            findMenuOption.updateMenuOptionContents(menuOptionUpdateRequest.getContents()); // (2)
         }
-        if (findMenuOption.getOptionPrice() != menuOptionUpdateRequest.getPrice()) { //TODO: 변수명 맞추기
-            findMenuOption.updateMenuOptionPrice(menuOptionUpdateRequest.getPrice());
+        if (findMenuOption.getOptionPrice() != menuOptionUpdateRequest.getOptionPrice()) {
+            findMenuOption.updateMenuOptionPrice(menuOptionUpdateRequest.getOptionPrice()); // (3)
         }
         if (!findMenuOption.getOptionStatus().equals(menuOptionUpdateRequest.getOptionStatus())) {
             if (OptionStatus.SOLD_OUT.equals(menuOptionUpdateRequest.getOptionStatus())) {
-                findMenuOption.updateOptionStatus(OptionStatus.SOLD_OUT);
+                findMenuOption.updateOptionStatus(OptionStatus.SOLD_OUT); // (4)
             }
             if (OptionStatus.ON_SALE.equals(menuOptionUpdateRequest.getOptionStatus())) {
-                findMenuOption.updateOptionStatus(OptionStatus.ON_SALE);
+                findMenuOption.updateOptionStatus(OptionStatus.ON_SALE); // (5)
             }
         }
 
@@ -97,6 +99,6 @@ public class MenuOptionService {
             throw new InvalidCredentialException("본인 가게의 메뉴 옵션만 수정할 수 있습니다.");
         }
 
-        findMenuOption.deleteMenuOption(OptionStatus.REMOVED);
+        findMenuOption.deleteMenuOption();
     }
 }

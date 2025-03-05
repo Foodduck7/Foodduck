@@ -4,11 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class MenuOptionCreateRequest {
 
     @NotBlank(message = "메뉴 옵션을 입력해주세요.")
@@ -21,5 +20,5 @@ public class MenuOptionCreateRequest {
 
     @NotNull(message = "가격을 입력해주세요.")
     @PositiveOrZero
-    private int price;
+    private int optionPrice;
 }

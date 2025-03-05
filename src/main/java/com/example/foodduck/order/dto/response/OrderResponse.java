@@ -8,5 +8,5 @@ import com.example.foodduck.order.status.OrderStatus;
  * @param id
  * @param orderStatus
  */
-public record OrderResponse(long id, OrderStatus orderStatus) {
+public record OrderResponse(long id, long storeId, OrderStatus orderStatus) {
 }

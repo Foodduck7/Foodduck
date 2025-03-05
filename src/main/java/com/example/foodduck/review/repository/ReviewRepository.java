@@ -18,8 +18,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import com.example.foodduck.review.entity.Review;
+import com.example.foodduck.store.entity.Store;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -46,6 +49,25 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     );
     */
+
+    /*
+        가게의 모든 리뷰 조회
+        수정일 (=최초 생성일)을 기준으로 정렬
+    */
+    @Query("select r from Review r  join r.store s where s.id = :storeId order by r.updatedAt desc")
+    Page<Review> findAllReviewByStore(
+            @Param("storeId") Long storeId,
+            Pageable pageable
+            );
+
+
+    /*
+        별점을 기준으로 리뷰 조회
+    */
+    @Query("select r from Review r where r.rating between : minRating and :maxRating")
+    Optional<Review> findAllReviewByRating(
+            @Param("minRating") int minRating,
+            @Param("maxRating") int maxRating, Review review);
 
 
 

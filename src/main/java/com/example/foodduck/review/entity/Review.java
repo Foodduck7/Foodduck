@@ -29,15 +29,14 @@ import java.util.List;
 public class Review extends BaseEntity {
 
     @Id
-    @Column(name = "review_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "rating",nullable = false)
+    @Column(nullable = false)
     private int rating;
 
 
-    @Column(name = "content", nullable = false)
+    @Column(nullable = false)
     private String content;
 
     // content 다건 조회
@@ -51,8 +50,8 @@ public class Review extends BaseEntity {
         회원ID
     */
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
 
     /*
@@ -60,7 +59,7 @@ public class Review extends BaseEntity {
         가게ID
     */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
 
@@ -69,7 +68,7 @@ public class Review extends BaseEntity {
         메뉴ID
     */
     @ManyToOne
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
 

@@ -11,17 +11,24 @@
 package com.example.foodduck.review.service;
 
 
+import com.example.foodduck.order.entity.Order;
+import com.example.foodduck.order.repository.OrderRepository;
+import com.example.foodduck.review.dto.request.ReviewRequest;
 import com.example.foodduck.review.dto.response.ReviewResponse;
 import com.example.foodduck.review.entity.Review;
 import com.example.foodduck.review.repository.ReviewRepository;
+import com.example.foodduck.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -29,6 +36,7 @@ import org.springframework.stereotype.Service;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final OrderRepository orderRepository;
 
     /* // 단건 조회 기능 불가
     public ReviewResponse findReviewById(Long id){
@@ -39,6 +47,39 @@ public class ReviewService {
         return new ReviewResponse(findReview);
     }
     */
+
+
+    /*
+        리뷰 등록 메서드
+    */
+    @Transactional
+    public ReviewResponse saveReview(Long orderId, ReviewRequest reviewRequest){
+
+
+
+
+        Review review = new Review(reviewRequest.getRating(), reviewRequest.getContent());
+        reviewRepository.save(review);
+
+        return new ReviewResponse(review);
+    }
+
+
+    /*
+        리뷰 조회 매서드
+    */
+    @Transactional
+    public Page<ReviewResponse> findAllReviewByStore(Long storeId, int page, int size){
+        Pageable pageable = PageRequest.of( (page > 0) ? page - 1 : 0, size, Sort.by("updatedAt").descending());
+        Page<Review> reviewPage = reviewRepository.findAllReviewByStore(storeId, pageable);
+
+
+        //return reviewPage.map(review -> new ReviewResponse(review));
+        return reviewPage.map(ReviewResponse::new);
+    }
+
+
+
 
 
 

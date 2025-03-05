@@ -9,7 +9,6 @@ import com.example.foodduck.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class MenuController {
             @PathVariable Long storeId,
             @Valid @RequestBody MenuCreateRequest menuCreateRequest
     ) {
-        return new ResponseEntity<>(menuService.createMenu(storeId, menuCreateRequest), HttpStatus.CREATED);
+        return ResponseEntity.ok(menuService.createMenu(storeId, menuCreateRequest));
     }
 
     @GetMapping("stores/{storeId}/menus")
@@ -37,12 +36,12 @@ public class MenuController {
             @RequestParam (defaultValue = "createdAt") String sortCondition
 
     ) {
-        return new ResponseEntity<>(menuService.getMenus(storeId, page,size, menuName, category, sortCondition), HttpStatus.OK);
+        return ResponseEntity.ok(menuService.getMenus(storeId, page, size, menuName, category, sortCondition));
     }
 
     @GetMapping("/menus/{menuId}")
     public ResponseEntity<MenuResponse> getMenu(@PathVariable Long menuId) {
-        return new ResponseEntity<>(menuService.getMenu(menuId), HttpStatus.OK);
+        return ResponseEntity.ok(menuService.getMenu(menuId));
     }
 
     @PatchMapping("/menus/{menuId}/update")
@@ -50,12 +49,12 @@ public class MenuController {
             @PathVariable Long menuId,
             @Valid @RequestBody MenuUpdateRequest menuUpdateRequest
     ) {
-        return new ResponseEntity<>(menuService.updateMenu(menuId, menuUpdateRequest), HttpStatus.OK);
+        return ResponseEntity.ok(menuService.updateMenu(menuId, menuUpdateRequest));
     }
 
     @DeleteMapping("/menus/{menuId}/delete")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
         menuService.deleteMenu(menuId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }

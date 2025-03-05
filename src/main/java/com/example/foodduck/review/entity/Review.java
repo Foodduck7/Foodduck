@@ -10,6 +10,8 @@
 package com.example.foodduck.review.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
+import com.example.foodduck.menu.entity.Menu;
+import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,29 +40,38 @@ public class Review extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    // content 다건 조회
+    //@OneToMany(mappedBy = "reviews", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    //List<Review> contentList = new ArrayList<>();
 
 
-    // 외래키
+
+    /*
+        외래키
+        회원ID
+    */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    // content 다건 조회
-    @OneToMany(mappedBy = "reviews", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Review> contentList = new ArrayList<>();
 
     /*
-    // 외래키
+        외래키
+        가게ID
+    */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
-    private Store store_id;
+    private Store store;
 
 
-    //외래키
+    /*
+        외래키
+        메뉴ID
+    */
     @ManyToOne
     @JoinColumn(name = "menu_id")
-    private Menu menu_id;
-    */
+    private Menu menu;
+
 
 
 

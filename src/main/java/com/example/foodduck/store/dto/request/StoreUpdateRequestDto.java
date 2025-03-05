@@ -1,6 +1,7 @@
 package com.example.foodduck.store.dto.request;
 
 import com.example.foodduck.store.entity.BreakState;
+import com.example.foodduck.store.entity.StoreState;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,6 +27,9 @@ public class StoreUpdateRequestDto {
     @NotNull(message = "마감 시간은 필수입니다.")
     private LocalTime closeTime;
 
-    @NotNull(message = "BreakState는 필수입니다.")
+    @NotNull(message = "breakState 필수입니다.")
     private BreakState breakState;
+
+    @NotNull(message = "storeState 필수입니다.")
+    private StoreState storeState;
 }

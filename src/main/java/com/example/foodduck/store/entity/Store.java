@@ -69,12 +69,13 @@ public class Store extends BaseEntity {
         this.id = storeId;
     }
 
-    public void update(String name, int minOrderPrice, LocalTime openTime, LocalTime closeTime, BreakState breakState) {
+    public void update(String name, int minOrderPrice, LocalTime openTime, LocalTime closeTime, BreakState breakState, StoreState storeState) {
         this.name = name;
         this.minOrderPrice = minOrderPrice;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.breakState = breakState;
+        this.storeState = storeState;
     }
 
     public void updateNoticeContent(String noticeContent) {

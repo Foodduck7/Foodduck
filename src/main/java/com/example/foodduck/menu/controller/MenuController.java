@@ -19,7 +19,7 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    @PostMapping("/menus/{storeId}")
+    @PostMapping("stores/{storeId}/menus")
     public ResponseEntity<MenuCreateResponse> createMenu(
             @PathVariable Long storeId,
             @Valid @RequestBody MenuCreateRequest menuCreateRequest
@@ -27,13 +27,17 @@ public class MenuController {
         return new ResponseEntity<>(menuService.createMenu(storeId, menuCreateRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping("/menus")
+    @GetMapping("stores/{storeId}/menus")
     public ResponseEntity<Page<MenuResponse>> getMenus(
+            @PathVariable Long storeId,
             @RequestParam (defaultValue = "1") int page,
-            @RequestParam (defaultValue = "10") int size
+            @RequestParam (defaultValue = "10") int size,
+            @RequestParam (required = false) String menuName,
+            @RequestParam (required = false) String category,
+            @RequestParam (defaultValue = "createdAt") String sortCondition
 
     ) {
-        return new ResponseEntity<>(menuService.getMenus(page,size), HttpStatus.OK);
+        return new ResponseEntity<>(menuService.getMenus(storeId, page,size, menuName, category, sortCondition), HttpStatus.OK);
     }
 
     @GetMapping("/menus/{menuId}")

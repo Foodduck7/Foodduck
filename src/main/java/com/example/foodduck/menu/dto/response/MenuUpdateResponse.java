@@ -17,17 +17,20 @@ public class MenuUpdateResponse {
 
     private final int price;
 
+    private final String category;
+
     private final MenuState menuState;
 
     private final LocalDateTime createdAt;
 
     private final LocalDateTime updatedAt;
 
-    public MenuUpdateResponse(Long id, Long storeId, String menuName, int price, MenuState menuState, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public MenuUpdateResponse(Long id, Long storeId, String menuName, int price,String category, MenuState menuState, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.storeId = storeId;
         this.menuName = menuName;
         this.price = price;
+        this.category = category;
         this.menuState = menuState;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -40,6 +43,7 @@ public class MenuUpdateResponse {
                 menu.getStore().getId(),
                 menu.getMenuName(),
                 menu.getPrice(),
+                menu.getCategory(),
                 menu.getMenuState(),
                 menu.getCreatedAt(),
                 menu.getUpdatedAt()

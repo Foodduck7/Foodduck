@@ -54,13 +54,14 @@ public class MenuService {
         return MenuCreateResponse.toDto(menu);
     }
 
+    //TODO: 정렬 기준 추가하기 (리뷰 순, 주문 순)
     @Transactional(readOnly = true)
-    public Page<MenuResponse> getMenus(int page, int size) {
+    public Page<MenuResponse> getMenus(Long storeId, int page, int size, String menuName, String category, String sortCondition) {
 
         int adjustPage = page <= 0 ? 1 : page - 1;
 
-        Pageable pageable = PageRequest.of(adjustPage, size, Sort.by("createdAt").descending());
-        Page<Menu> pageMenus = menuRepository.findAll(pageable);
+        Pageable pageable = PageRequest.of(adjustPage, size, Sort.by(sortCondition).descending());
+        Page<Menu> pageMenus = menuRepository.findAllByStoreId(storeId, menuName, category, pageable);
 
         List<MenuResponse> menuList = pageMenus.getContent().stream()
                 .map(MenuResponse::toDto)
@@ -91,8 +92,9 @@ public class MenuService {
         /**
          * (1): menuName이 입력된 경우
          * (2): price가 입력된 경우
-         * (3): menuState가 입력되고 해당 값이 SOLD_OUT인 경우
-         * (4): menuState가 입력되고 해당 값이 ON_SALE인 경우
+         * (3): category가 입력된 경우
+         * (4): menuState가 입력되고 해당 값이 SOLD_OUT인 경우
+         * (5): menuState가 입력되고 해당 값이 ON_SALE인 경우
          */
         if (StringUtils.hasText(menuUpdateRequest.getMenuName())) {
             findMenu.updateMenuName(menuUpdateRequest.getMenuName()); // (1)
@@ -100,12 +102,15 @@ public class MenuService {
         if (findMenu.getPrice() != menuUpdateRequest.getPrice()) {
             findMenu.updatePrice(menuUpdateRequest.getPrice()); // (2)
         }
+        if (StringUtils.hasText(menuUpdateRequest.getCategory())) {
+            findMenu.updateMenuCategory(menuUpdateRequest.getCategory()); //(3)
+        }
         if (!findMenu.getMenuState().equals(menuUpdateRequest.getMenuState())) {
             if (SOLD_OUT.equals(menuUpdateRequest.getMenuState())) {
-                findMenu.updateMenuStatus(SOLD_OUT); // (3)
+                findMenu.updateMenuStatus(SOLD_OUT); // (4)
             }
             if (ON_SALE.equals(menuUpdateRequest.getMenuState())) {
-                findMenu.updateMenuStatus(ON_SALE); // (4)
+                findMenu.updateMenuStatus(ON_SALE); // (5)
             }
         }
 

@@ -2,6 +2,7 @@ package com.example.foodduck.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.coyote.BadRequestException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -43,6 +44,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MinimumOrderAmountException.class)
     public ResponseEntity<String> handleMinimumOrderAmountException(MinimumOrderAmountException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    // Param을 통해 입력된 값이 올바르지 않을 때에 대한 예외처리: 400
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<String> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("입력된 조건이 올바르지 않습니다. 확인 후 다시 시도해주세요.");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

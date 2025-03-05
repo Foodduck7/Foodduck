@@ -2,6 +2,7 @@ package com.example.foodduck.store.controller;
 
 import com.example.foodduck.store.dto.request.StoreSaveRequestDto;
 import com.example.foodduck.store.dto.response.StoreResponseDto;
+import com.example.foodduck.store.dto.response.StoreWithMenusResponseDto;
 import com.example.foodduck.store.repository.StoreRepository;
 import com.example.foodduck.store.service.StoreService;
 import jakarta.validation.Valid;
@@ -32,8 +33,9 @@ public class StoreController {
 
     // Reade
     @GetMapping("/stores/{storeId}")
-    public ResponseEntity<StoreResponseDto> getStore(@PathVariable Long storeId) {
-        return ResponseEntity.ok(storeService.findById(storeId));
+    public ResponseEntity<StoreWithMenusResponseDto> getStore(@PathVariable Long storeId) {
+        StoreWithMenusResponseDto dto = storeService.findById(storeId);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping("/stores")

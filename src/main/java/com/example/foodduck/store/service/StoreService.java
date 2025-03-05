@@ -1,12 +1,16 @@
 package com.example.foodduck.store.service;
 
+import com.example.foodduck.menu.entity.Menu;
+import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.store.dto.request.StoreSaveRequestDto;
 import com.example.foodduck.store.dto.response.StoreResponseDto;
+import com.example.foodduck.store.dto.response.StoreWithMenusResponseDto;
 import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.store.repository.StoreRepository;
 import com.example.foodduck.user.entity.User;
 import com.example.foodduck.user.entity.UserRole;
 import com.example.foodduck.user.repository.UserRepository;
+import com.example.foodduck.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +24,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final MenuRepository menuRepository;
 
     // Create
     @Transactional
@@ -46,10 +51,13 @@ public class StoreService {
 
     // Read
     @Transactional(readOnly = true)
-    public StoreResponseDto findById(Long storeId) {
+    public StoreWithMenusResponseDto findById(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하지 않습니다."));
-        return new StoreResponseDto(store);
+        // 가게 단건 조회시 메뉴 가져오기
+        List<Menu> menus = menuRepository.findByStore(store);
+
+        return new StoreWithMenusResponseDto(store, menus);
     }
 
     @Transactional(readOnly = true)

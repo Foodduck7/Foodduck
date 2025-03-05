@@ -1,12 +1,15 @@
 package com.example.foodduck.store.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
+import com.example.foodduck.menu.entity.Menu;
+import com.example.foodduck.order.entity.Order;
 import com.example.foodduck.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -47,6 +50,12 @@ public class Store extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StoreState storeState = StoreState.ACTIVE;
+
+//    @OneToMany(mappedBy = "store")
+//    private List<Menu> menus;
+//
+//    @OneToMany(mappedBy = "store")
+//    private List<Order> orders;
 
     public Store(User owner, String name, int minOrderPrice, LocalTime openTime, LocalTime closeTime, BreakState breakState) {
         this.owner = owner;

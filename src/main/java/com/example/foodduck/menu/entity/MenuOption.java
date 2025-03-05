@@ -54,6 +54,9 @@ public class MenuOption extends BaseEntity {
 
     public void updateOptionStatus(OptionStatus optionStatus) {
         this.optionStatus = optionStatus;
+    }
 
+    public void deleteMenuOption(OptionStatus optionStatus) {
+        this.optionStatus = optionStatus;
     }
 }

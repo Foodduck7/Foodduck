@@ -31,5 +31,12 @@ public class MenuOptionController {
         return ResponseEntity.ok(menuOptionService.updateMenuOption(optionId, menuOptionUpdateRequest));
     }
 
+    @DeleteMapping("menus/options/{optionId}/delete")
+    public ResponseEntity<Void> deleteMenuOption(@PathVariable Long optionId) {
+        menuOptionService.deleteMenuOption(optionId);
+
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

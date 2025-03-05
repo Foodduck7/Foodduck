@@ -15,9 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import static com.example.foodduck.menu.entity.MenuState.ON_SALE;
-import static com.example.foodduck.menu.entity.MenuState.SOLD_OUT;
-
 @Service
 @RequiredArgsConstructor
 public class MenuOptionService {
@@ -84,5 +81,22 @@ public class MenuOptionService {
         }
 
         return MenuOptionUpdateResponse.toDto(findMenuOption);
+    }
+
+    @Transactional
+    public void deleteMenuOption(Long optionId) {
+        User findUser = menuService.getAuthenticatedUser();
+
+        MenuOption findMenuOption = menuOptionRepository.findById(optionId)
+                .orElseThrow(() -> new IllegalArgumentException("메뉴 옵션을 찾을 수 없습니다."));
+
+        Menu findMenu = menuService.findMenuOrElseThrow(findMenuOption.getMenu().getId());
+
+        //본인 가게의 메뉴 옵션만 수정 가능
+        if (!findUser.getId().equals(findMenu.getStore().getOwner().getId())) {
+            throw new InvalidCredentialException("본인 가게의 메뉴 옵션만 수정할 수 있습니다.");
+        }
+
+        findMenuOption.deleteMenuOption(OptionStatus.REMOVED);
     }
 }

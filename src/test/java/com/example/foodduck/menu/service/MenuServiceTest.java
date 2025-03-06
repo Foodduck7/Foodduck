@@ -2,6 +2,7 @@ package com.example.foodduck.menu.service;
 
 import com.example.foodduck.exception.custom.InvalidCredentialException;
 import com.example.foodduck.menu.dto.request.MenuCreateRequest;
+import com.example.foodduck.menu.dto.response.MenuResponse;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.store.entity.BreakState;
@@ -17,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -234,6 +238,44 @@ class MenuServiceTest {
                 () -> menuService.findMenuOrElseThrow(menuId),
                 "메뉴를 찾을 수 없습니다."
         );
+    }
+
+    /*
+    * 메뉴 전체 조회
+    * */
+    @Test
+    void 메뉴_전체_조회_성공 () {
+        // given
+        Long storeId = 1L;
+        int page = 1;
+        int size = 10;
+        String sortBy = "createdAt";
+        String menuName = "메뉴1";
+        String category = "카테고리1";
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(sortBy).descending()); // number: 0
+
+        Store store = new Store();
+        ReflectionTestUtils.setField(store, "id", storeId);
+
+        List<Menu> menuList = new ArrayList<>();
+        menuList.add(new Menu("메뉴1", 1000, "카테고리1", store));
+        menuList.add(new Menu("메뉴2", 2000, "카테고리2", store));
+        Page<Menu> menuPage = new PageImpl<>(menuList, pageable, 15);
+
+        when(menuRepository.findAllByStoreId(storeId, menuName, category, pageable)).thenReturn(menuPage);
+
+        // when
+        Page<MenuResponse> menus = menuService.getMenus(storeId, page, size, menuName, category, sortBy);
+
+        // then
+        assertNotNull(menus);
+        assertEquals(2, menus.getContent().size());
+        assertEquals(10, menus.getSize());
+        assertEquals(0, menus.getNumber());
+        assertEquals(15, menus.getTotalElements());
+        assertEquals(2, menus.getTotalPages());
+        assertTrue(menus.getSort().isSorted());
     }
 
 

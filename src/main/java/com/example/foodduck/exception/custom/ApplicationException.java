@@ -1,4 +1,4 @@
-package com.example.foodduck.exception;
+package com.example.foodduck.exception.custom;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

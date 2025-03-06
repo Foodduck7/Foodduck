@@ -1,7 +1,7 @@
 package com.example.foodduck.user.service;
 
 import com.example.foodduck.common.config.jwt.JwtUtil;
-import com.example.foodduck.exception.InvalidCredentialException;
+import com.example.foodduck.exception.custom.InvalidCredentialException;
 import com.example.foodduck.user.dto.request.UserJoinRequest;
 import com.example.foodduck.user.dto.request.UserLoginRequest;
 import com.example.foodduck.user.dto.request.UserPasswordUpdateRequest;
@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -32,12 +33,22 @@ public class UserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다");
         }
+        // owner랑 user만 되도록 세팅해놔서 admin 을 거부하고 있어서 추가해줘야함. 또한, user를 기본값으로 세팅.
+        UserRole role;
+        try {
+            role = UserRole.valueOf(request.getRole().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException | NullPointerException e) {
+            role = UserRole.USER;
+        }
+
         User user = new User(
                 request.getName(),
                 request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
-                request.getRole().equalsIgnoreCase("OWNER") ? UserRole.OWNER : UserRole.USER
+                role
         );
+
+
         userRepository.save(user);
         return new UserResponse(user);
     }

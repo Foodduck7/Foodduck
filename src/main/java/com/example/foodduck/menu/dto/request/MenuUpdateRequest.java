@@ -13,6 +13,10 @@ public class MenuUpdateRequest {
     @PositiveOrZero
     private int price;
 
+    @Size(min = 1, max = 30)
+    private String category;
+
     private MenuState menuState;
+
 
 }

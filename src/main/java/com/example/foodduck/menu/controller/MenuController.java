@@ -5,11 +5,11 @@ import com.example.foodduck.menu.dto.request.MenuUpdateRequest;
 import com.example.foodduck.menu.dto.response.MenuCreateResponse;
 import com.example.foodduck.menu.dto.response.MenuResponse;
 import com.example.foodduck.menu.dto.response.MenuUpdateResponse;
+import com.example.foodduck.menu.dto.response.MenuWithOptionResponse;
 import com.example.foodduck.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,26 +19,30 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    @PostMapping("/menus/{storeId}")
+    @PostMapping("/stores/{storeId}/menus")
     public ResponseEntity<MenuCreateResponse> createMenu(
             @PathVariable Long storeId,
             @Valid @RequestBody MenuCreateRequest menuCreateRequest
     ) {
-        return new ResponseEntity<>(menuService.createMenu(storeId, menuCreateRequest), HttpStatus.CREATED);
+        return ResponseEntity.ok(menuService.createMenu(storeId, menuCreateRequest));
     }
 
-    @GetMapping("/menus")
+    @GetMapping("/stores/{storeId}/menus")
     public ResponseEntity<Page<MenuResponse>> getMenus(
+            @PathVariable Long storeId,
             @RequestParam (defaultValue = "1") int page,
-            @RequestParam (defaultValue = "10") int size
+            @RequestParam (defaultValue = "10") int size,
+            @RequestParam (required = false) String menuName,
+            @RequestParam (required = false) String category,
+            @RequestParam (defaultValue = "createdAt") String sortCondition
 
     ) {
-        return new ResponseEntity<>(menuService.getMenus(page,size), HttpStatus.OK);
+        return ResponseEntity.ok(menuService.getMenus(storeId, page, size, menuName, category, sortCondition));
     }
 
     @GetMapping("/menus/{menuId}")
-    public ResponseEntity<MenuResponse> getMenu(@PathVariable Long menuId) {
-        return new ResponseEntity<>(menuService.getMenu(menuId), HttpStatus.OK);
+    public ResponseEntity<MenuWithOptionResponse> getMenu(@PathVariable Long menuId) {
+        return ResponseEntity.ok(menuService.getMenu(menuId));
     }
 
     @PatchMapping("/menus/{menuId}/update")
@@ -46,12 +50,12 @@ public class MenuController {
             @PathVariable Long menuId,
             @Valid @RequestBody MenuUpdateRequest menuUpdateRequest
     ) {
-        return new ResponseEntity<>(menuService.updateMenu(menuId, menuUpdateRequest), HttpStatus.OK);
+        return ResponseEntity.ok(menuService.updateMenu(menuId, menuUpdateRequest));
     }
 
     @DeleteMapping("/menus/{menuId}/delete")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
         menuService.deleteMenu(menuId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 }

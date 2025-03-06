@@ -30,12 +30,13 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
-                .requestMatchers("/users/logout").authenticated()
-                .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
-                .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
-                    .requestMatchers("/orders/request").hasRole("USER")
-                .anyRequest().authenticated()
+                    .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
+                    .requestMatchers("/users/logout").authenticated()
+                    .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
+                    .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
+                    .requestMatchers("/orders/request").hasAuthority("ROLE_USER")
+                    .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasAuthority("ROLE_USER")
+                    .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); //필터 직접 등록

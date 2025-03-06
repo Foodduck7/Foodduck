@@ -20,6 +20,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
+        System.out.println(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
     }
 
@@ -52,5 +53,16 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)  // 각 필드의 오류 메시지를 가져온다.
                 .toList();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorList);
+    }
+
+    // 장바구니와 메뉴의 가게가 일치하지 않을 경우에 대한 예외처리: 400
+    @ExceptionHandler(StoreMismatchException.class)
+    public ResponseEntity<String> handleStoreMismatchException(StoreMismatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredShoppingCartException.class)
+    public ResponseEntity<String> handleExpiredShoppingCartException(ExpiredShoppingCartException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

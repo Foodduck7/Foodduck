@@ -5,6 +5,10 @@ import com.example.foodduck.store.entity.Store;
 import jakarta.persistence.*;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.foodduck.menu.entity.MenuState.ON_SALE;
 import static com.example.foodduck.menu.entity.MenuState.REMOVED;
@@ -12,6 +16,7 @@ import static com.example.foodduck.menu.entity.MenuState.REMOVED;
 @Getter
 @Entity
 @Table(name = "menus")
+@NoArgsConstructor
 public class Menu extends BaseEntity {
 
     @Id
@@ -22,6 +27,8 @@ public class Menu extends BaseEntity {
 
     private int price;
 
+    private String category;
+
     @Enumerated(EnumType.STRING)
     private MenuState menuState;
 
@@ -29,13 +36,17 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    public Menu() {
+    @OneToMany(mappedBy =  "menu",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<MenuOption> menuOptionList = new ArrayList<>();
 
+    public Menu(Long menuId) {
+        this.id = menuId;
     }
 
-    public Menu(String menuName, int price, Store store) {
+    public Menu(String menuName, int price, String category, Store store) {
         this.menuName = menuName;
         this.price = price;
+        this.category = category;
         this.menuState = ON_SALE;
         this.store = store;
     }
@@ -54,5 +65,9 @@ public class Menu extends BaseEntity {
 
     public void deleteMenu() {
         this.menuState = REMOVED;
+    }
+
+    public void updateMenuCategory(String category) {
+        this.category = category;
     }
 }

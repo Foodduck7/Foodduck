@@ -32,7 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
                     .requestMatchers("/users/logout").authenticated()
-                    .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
+                    .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
                     .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
                     .requestMatchers("/orders/request").hasAuthority("ROLE_USER")
                     .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasAuthority("ROLE_USER")

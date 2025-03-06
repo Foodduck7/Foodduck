@@ -9,6 +9,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 주문 정보를 저장하는 entity
  * @author 이호수
@@ -24,27 +27,26 @@ public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "menu_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Menu menu;
-
     @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderMenu> orderMenus = new ArrayList<>();
 
     // 주문 상태: 기본값 요청 상태
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.REQUESTED;
 
-    public Order(User user, Menu menu, Store store, OrderStatus orderStatus) {
+    public Order(User user, List<OrderMenu> orderMenus, Store store, OrderStatus orderStatus) {
         this.user = user;
-        this.menu = menu;
+        this.orderMenus = orderMenus;
         this.store = store;
         this.orderStatus = orderStatus;
     }

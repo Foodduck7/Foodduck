@@ -24,8 +24,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static java.lang.String.valueOf;
-
 @RequiredArgsConstructor
 @Service
 public class ShoppingCartService {

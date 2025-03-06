@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,12 +32,11 @@ public class OrderLoggingAspect {
     public Object logOrderCreate(ProceedingJoinPoint joinPoint) throws Throwable {
         OrderCreateRequest request = (OrderCreateRequest) joinPoint.getArgs()[0];
         Long userId = request.getUserId();
-        Long menuId = request.getMenuId();
         String url = httpServletRequest.getRequestURI();
         long requestTimestamp = System.currentTimeMillis();
         String requestBody = objectMapper.writeValueAsString(joinPoint.getArgs());
-        log.info("AOP - Order API Request: User Id={}, Menu Id={} Timestamp={}, URL={}, RequestBody={}"
-                , userId, menuId, requestTimestamp, url, requestBody);
+        log.info("AOP - Order API Request: User Id={}, Timestamp={}, URL={}, RequestBody={}"
+                , userId, requestTimestamp, url, requestBody);
         Object result = joinPoint.proceed();
         if (result instanceof OrderResponse orderResponse) {
                 Long orderId = orderResponse.id();

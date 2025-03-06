@@ -34,8 +34,9 @@ public class SecurityConfig {
                         .requestMatchers("/users/logout").authenticated()
                         .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
                         .requestMatchers("/menus/{storeid}", "/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
-                        .requestMatchers("/orders/request").hasAuthority("ROLE_USER")
+                        .requestMatchers("/shoppingCarts/{id}/orders/request").hasAuthority("ROLE_USER")
                         .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasAuthority("ROLE_USER")
+                        .requestMatchers("/shoppingCarts/{id}/orders/status", "/shoppingCarts/{id}/orders/{orderId}").hasAuthority("ROLE_OWNER")
                         .requestMatchers(
                                 "/menus/{storeid}",
                                 "/menus/{menuId}/update",

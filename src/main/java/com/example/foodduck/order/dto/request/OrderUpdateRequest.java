@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 public class OrderUpdateRequest {
     @NotNull(message = "주문 id값 입력은 필수입니다")
-    private long orderId;
+    private Long orderId;
     @NotBlank(message = "사장님 승인 상태값 입력은 필수입니다")
     private String ownerApprovalStatus;
 }

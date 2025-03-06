@@ -162,8 +162,8 @@ class StoreServiceTest {
         given(storeRepository.findByNameContaining(name)).willReturn(storeList);
 
         List<Menu> menus = Arrays.asList(
-                new Menu("Menu1", 1000, store),
-                new Menu("Menu2", 1000, store)
+                new Menu("Menu1", 1000, "test", store),
+                new Menu("Menu2", 1000, "test", store)
         );
 
         given(menuRepository.findByStore(store)).willReturn(menus);

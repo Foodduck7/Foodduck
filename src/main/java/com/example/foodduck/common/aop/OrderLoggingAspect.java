@@ -30,8 +30,16 @@ public class OrderLoggingAspect {
     // 주문 요청 로그
     @Around("execution(* com.example.foodduck.order..*createOrder(..))")
     public Object logOrderCreate(ProceedingJoinPoint joinPoint) throws Throwable {
-        OrderCreateRequest request = (OrderCreateRequest) joinPoint.getArgs()[0];
-        Long userId = request.getUserId();
+        Object[] args = joinPoint.getArgs();
+        Long userId = null;
+        OrderCreateRequest request;
+        for (Object arg : args) {
+            if (arg instanceof Long) {
+                userId = (Long) arg;
+            } else if (arg instanceof OrderCreateRequest) {
+                request = (OrderCreateRequest) arg;
+            }
+        }
         String url = httpServletRequest.getRequestURI();
         long requestTimestamp = System.currentTimeMillis();
         String requestBody = objectMapper.writeValueAsString(joinPoint.getArgs());
@@ -50,7 +58,16 @@ public class OrderLoggingAspect {
     // 주문 상태 변경 로그
     @Around("execution(* com.example.foodduck.order..*updateOrderState(..))")
     public Object logOrderState(ProceedingJoinPoint joinPoint) throws Throwable {
-        OrderUpdateRequest request = (OrderUpdateRequest) joinPoint.getArgs()[0];
+        Object[] args = joinPoint.getArgs();
+        Long shoppingCartId = null;
+        OrderUpdateRequest request = null;
+        for (Object arg : args) {
+            if (arg instanceof Long) {
+                shoppingCartId = (Long) arg;
+            } else if (arg instanceof OrderUpdateRequest) {
+                request = (OrderUpdateRequest) arg;
+            }
+        }
         Long orderId = request.getOrderId();
         String ownerApprovalStatus = request.getOwnerApprovalStatus();
         String url = httpServletRequest.getRequestURI();

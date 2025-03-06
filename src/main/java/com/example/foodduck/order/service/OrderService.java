@@ -50,21 +50,21 @@ public class OrderService {
         if (foundStore.getStoreState().equals(StoreState.INACTIVE)) {
             throw new OutOfOrderTimeException("Not Currently Available For Order");
         }
-        List<OrderMenu> orderMenus = foundShoppingCart.getShoppingCartMenus().stream()
-                .map(scm -> new OrderMenu(scm.getMenu(), scm.getQuantity()))
-                .toList();
-        // 주문 총 금액
-        BigDecimal totalAmount = orderMenus.stream()
-                .map(om -> BigDecimal.valueOf(om.getMenu().getPrice()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        // 가게 최소 주문 금액 넘지 않을 경우 예외처리
-        if ((BigDecimal.valueOf(foundStore.getMinOrderPrice())).compareTo(totalAmount) > 0) {
-            throw new MinimumOrderAmountException("Minimum Order Amount Should Be More Than: " + foundStore.getMinOrderPrice());
-        }
         // 사용자 조회
         User foundUser = userRepository.findById(orderCreateRequest.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User Not Found"));
-        Order order = new Order(foundUser, orderMenus, foundStore, OrderStatus.REQUESTED);
+        // 주문 총 금액
+        BigDecimal totalAmount = foundShoppingCart.getShoppingCartMenus().stream()
+                .map(om -> BigDecimal.valueOf(om.getMenu().getPrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        // 가게 최소 주문 금액 넘지 않을 경우 예외처리
+        if ((BigDecimal.valueOf(foundStore.getMinOrderPrice())).compareTo(totalAmount) < 0) {
+            throw new MinimumOrderAmountException("Minimum Order Amount Should Be More Than: " + foundStore.getMinOrderPrice());
+        }
+        Order order = new Order(foundUser, foundStore, OrderStatus.REQUESTED);
+        List<OrderMenu> menus = foundShoppingCart.getShoppingCartMenus().stream()
+                .map(scm -> new OrderMenu(order, scm.getMenu(), scm.getQuantity())).toList();
+        order.setMenus(menus);
         Order savedOrder = orderRepository.save(order);
         return new OrderResponse(savedOrder.getId(), foundStore.getId(), savedOrder.getOrderStatus());
     }
@@ -76,7 +76,7 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
         // 주문 총 금액
         BigDecimal totalAmount = foundOrder.getOrderMenus().stream()
-                .map(om -> BigDecimal.valueOf(om.getMenu().getPrice()))
+                .map(om -> BigDecimal.valueOf(om.getMenu().getPrice()).multiply(BigDecimal.valueOf(om.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new OrderGetResponse(foundOrder.getId(), foundOrder.getStore().getId(), foundOrder.getOrderStatus(), foundOrder.getOrderMenus(), totalAmount);
     }

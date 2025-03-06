@@ -6,10 +6,12 @@ import com.example.foodduck.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,15 +30,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/shoppingCarts/{id}/orders/{orderId}").permitAll()
                         .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
                         .requestMatchers("/users/logout").authenticated()
                         .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
                         .requestMatchers("/menus/{storeid}", "/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
                         .requestMatchers("/shoppingCarts/{id}/orders/request").hasAuthority("ROLE_USER")
                         .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasAuthority("ROLE_USER")
-                        .requestMatchers("/shoppingCarts/{id}/orders/status", "/shoppingCarts/{id}/orders/{orderId}").hasAuthority("ROLE_OWNER")
+                        .requestMatchers("/shoppingCarts/{id}/orders/status").hasAuthority("ROLE_OWNER")
+                        .requestMatchers(HttpMethod.DELETE, "/shoppingCarts/{id}/orders/{orderId}").hasAuthority("ROLE_OWNER")
                         .requestMatchers(
                                 "/menus/{storeid}",
                                 "/menus/{menuId}/update",

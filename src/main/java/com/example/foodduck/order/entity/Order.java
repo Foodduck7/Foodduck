@@ -1,7 +1,6 @@
 package com.example.foodduck.order.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
-import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.order.status.OrderStatus;
 import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.user.entity.User;
@@ -33,7 +32,7 @@ public class Order extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
@@ -44,9 +43,13 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.REQUESTED;
 
-    public Order(User user, List<OrderMenu> orderMenus, Store store, OrderStatus orderStatus) {
-        this.user = user;
+    // 장바구니 메뉴 추가 메서드
+    public void setMenus(List<OrderMenu> orderMenus) {
         this.orderMenus = orderMenus;
+    }
+
+    public Order(User user, Store store, OrderStatus orderStatus) {
+        this.user = user;
         this.store = store;
         this.orderStatus = orderStatus;
     }

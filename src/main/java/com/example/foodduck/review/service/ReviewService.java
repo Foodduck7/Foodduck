@@ -30,6 +30,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -55,10 +57,8 @@ public class ReviewService {
     @Transactional
     public ReviewResponse saveReview(Long orderId, ReviewRequest reviewRequest){
 
-
-
-
-        Review review = new Review(reviewRequest.getRating(), reviewRequest.getContent());
+        Order order = orderRepository.findOrderById(orderId);
+        Review review = new Review(reviewRequest.getRating(), reviewRequest.getContent(), order);
         reviewRepository.save(review);
 
         return new ReviewResponse(review);
@@ -74,19 +74,7 @@ public class ReviewService {
         Page<Review> reviewPage = reviewRepository.findAllReviewByStore(storeId, pageable);
 
 
-        //return reviewPage.map(review -> new ReviewResponse(review));
         return reviewPage.map(ReviewResponse::new);
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

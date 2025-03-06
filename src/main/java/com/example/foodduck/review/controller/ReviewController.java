@@ -14,6 +14,7 @@ import com.example.foodduck.review.dto.request.ReviewRequest;
 import com.example.foodduck.review.dto.response.ReviewResponse;
 import com.example.foodduck.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,6 @@ public class ReviewController {
 
     /*
         리뷰 등록 메서드
-        url명 수정 필요
-        Order에서 id를 주입
     */
     @PostMapping("/{orderId}")
     public ResponseEntity<ReviewResponse> saveReview(
@@ -44,7 +43,7 @@ public class ReviewController {
 
 
     /*
-        가게 기준으로
+        가게 id기준으로
         수정일(최초 생성일) 기준정렬 리뷰 조회 매서드
         페이지네이션 적용
         한페이지에 20개의 리뷰
@@ -60,7 +59,5 @@ public class ReviewController {
 
         return new ResponseEntity<>(reviewResponse, HttpStatus.OK);
     }
-
-
 
 }

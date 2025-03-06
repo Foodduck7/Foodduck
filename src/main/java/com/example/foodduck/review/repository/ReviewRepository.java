@@ -54,7 +54,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         가게의 모든 리뷰 조회
         수정일 (=최초 생성일)을 기준으로 정렬
     */
-    @Query("select r from Review r  join r.store s where s.id = :storeId order by r.updatedAt desc")
+    @Query("select r from Review r  join r.order s where s.id = :storeId order by r.updatedAt desc")
     Page<Review> findAllReviewByStore(
             @Param("storeId") Long storeId,
             Pageable pageable
@@ -68,11 +68,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findAllReviewByRating(
             @Param("minRating") int minRating,
             @Param("maxRating") int maxRating, Review review);
-
-
-
-
-
 
 
 }

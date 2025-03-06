@@ -3,7 +3,9 @@ package com.example.foodduck.shoppingcart.entity;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.shoppingcart.status.ShoppingCartStatus;
 import com.example.foodduck.store.entity.Store;
+import com.example.foodduck.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,15 +15,19 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "shoppingCart")
 @Entity
-@NoArgsConstructor
 public class ShoppingCart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Store store;
@@ -40,7 +46,8 @@ public class ShoppingCart {
     @Enumerated(EnumType.STRING)
     private ShoppingCartStatus shoppingCartStatus = ShoppingCartStatus.EXISTS;
 
-    public ShoppingCart(Store store, LocalDateTime modifiedAt) {
+    public ShoppingCart(User user, Store store, LocalDateTime modifiedAt) {
+        this.user = user;
         this.store = store;
         this.modifiedAt = modifiedAt;
 
@@ -62,7 +69,7 @@ public class ShoppingCart {
 
     // 업데이트 시점으로부터 하루 지났는지 여부 리턴 메서드
     public boolean isExpired() {
-        return modifiedAt.isBefore(LocalDateTime.now().minus(1, ChronoUnit.DAYS));
+        return modifiedAt.isBefore(LocalDateTime.now().minusDays(1));
     }
 
     // 장바구니 soft delete 메서드

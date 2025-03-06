@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
 
-    @Query("SELECT s ShoppingCart FROM ShoppingCart s JOIN FETCH Menu m ON m.store.id = s.store.id WHERE s.id = :id")
-    Optional<ShoppingCart> findShoppingCartByIdWithMenu(@Param("id") long id);
+    @Query("SELECT s FROM ShoppingCart s JOIN FETCH s.shoppingCartMenus scm JOIN FETCH scm.menu WHERE s.user.id = :userId")
+    Optional<ShoppingCart> findByUserIdWithMenu(@Param("userId") long userId);
 
 }

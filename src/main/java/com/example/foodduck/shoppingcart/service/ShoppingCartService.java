@@ -1,5 +1,6 @@
 package com.example.foodduck.shoppingcart.service;
 
+import com.example.foodduck.exception.custom.ExpiredShoppingCartException;
 import com.example.foodduck.exception.custom.StoreMismatchException;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.menu.repository.MenuRepository;
@@ -12,6 +13,8 @@ import com.example.foodduck.shoppingcart.entity.ShoppingCartMenu;
 import com.example.foodduck.shoppingcart.repository.ShoppingCartRepository;
 import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.store.repository.StoreRepository;
+import com.example.foodduck.user.entity.User;
+import com.example.foodduck.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,26 +32,34 @@ public class ShoppingCartService {
 
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
     private final ShoppingCartRepository shoppingCartRepository;
 
-    // 쇼핑카트 생성(메뉴 쇼핑카트에 추가)
+    // 장바구니 생성(메뉴 쇼핑카트에 추가)
     @Transactional
     public ShoppingCartResponse createShoppingCart(ShoppingCartCreateRequest shoppingCartCreateRequest) {
-        Store foundStore = getStoreById(shoppingCartCreateRequest.getStoreId());
+        User foundUser = userRepository.findById(shoppingCartCreateRequest.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User Not Found"));
+        Store foundStore = storeRepository.findById(shoppingCartCreateRequest.getStoreId())
+                .orElseThrow(() -> new EntityNotFoundException("Store Not Found"));
         Menu foundMenu = getMenuById(shoppingCartCreateRequest.getMenuId());
-        ShoppingCart shoppingCart = new ShoppingCart(foundStore, LocalDateTime.now());
+        ShoppingCart shoppingCart = new ShoppingCart(foundUser, foundStore, LocalDateTime.now());
         shoppingCart.addMenu(foundMenu, shoppingCartCreateRequest.getQuantity());
         ShoppingCart savedShoppingCart = shoppingCartRepository.save(shoppingCart);
         return new ShoppingCartResponse(savedShoppingCart.getId(), savedShoppingCart.getStore().getId(), savedShoppingCart.getModifiedAt());
     }
 
-    // 쇼핑카트 조회
-    // FETCH JOIN 또는 @EntityGraph 사용해 ShoppingCart 조회시 Menu 도 함께 조회
+    // 사용자 아이디로 장바구니와 메뉴 조회
     @Transactional
-    public ShoppingCartGetResponse findShoppingCart(long id) {
-        ShoppingCart foundShoppingCart = getShoppingCartById(id);
+    public ShoppingCartGetResponse findShoppingCart(long userId) {
+        ShoppingCart foundShoppingCart = shoppingCartRepository.findByUserIdWithMenu(userId)
+                .orElseThrow(() -> new EntityNotFoundException("ShoppingCart Not Found(Check User ID)"));
         // 마지막 수정 이후로 1일 초과에 대한 예외처리
-        markShoppingCartAsDeleted(foundShoppingCart);
+        if (foundShoppingCart.isExpired()) {
+            foundShoppingCart.delete();
+            shoppingCartRepository.save(foundShoppingCart);
+            throw new ExpiredShoppingCartException("ShoppingCart Has Expired(1 Day Exceeded Since Modified)");
+        }
         List<ShoppingCartMenu> cartMenus = foundShoppingCart.getShoppingCartMenus();
         //메뉴 총 가격
         BigDecimal totalAmount = cartMenus.stream()
@@ -60,7 +71,7 @@ public class ShoppingCartService {
         return new ShoppingCartGetResponse(foundShoppingCart, totalAmount, deliveryFee);
     }
 
-    // 쇼핑카트 메뉴 업데이트 - 추가
+    // 장바구니 메뉴 업데이트 - 추가
     @Transactional
     public ShoppingCartResponse addMenuToShoppingCart(long id, ShoppingCartAddRequest shoppingCartAddRequest) {
         ShoppingCart foundShoppingCart = getShoppingCartById(id);
@@ -72,7 +83,7 @@ public class ShoppingCartService {
         return new ShoppingCartResponse(savedShoppingCart.getId(), savedShoppingCart.getStore().getId(), savedShoppingCart.getModifiedAt());
     }
 
-    // 쇼핑카트 메뉴 삭제
+    // 장바구니 메뉴 삭제
     @Transactional
     public ShoppingCartResponse removeMenuToShoppingCart(long id, long menuId) {
         ShoppingCart foundShoppingCart = getShoppingCartById(id);
@@ -86,12 +97,6 @@ public class ShoppingCartService {
         }
         foundShoppingCart.removeMenu(foundMenu);
         return new ShoppingCartResponse(foundShoppingCart.getId(), foundShoppingCart.getStore().getId(), foundShoppingCart.getModifiedAt());
-    }
-
-    // 가게 조회 후 리턴 메서드
-    private Store getStoreById(Long storeId) {
-        return storeRepository.findById(storeId)
-                .orElseThrow(() -> new EntityNotFoundException("Store Not Found"));
     }
 
     // 메뉴 조회 후 리턴 메서드
@@ -111,12 +116,6 @@ public class ShoppingCartService {
         if (!shoppingCart.getStore().getId().equals(menu.getStore().getId())) {
             throw new StoreMismatchException("Menu and Shopping Cart Store Do Not Match");
         }
-    }
-
-    @Transactional
-    public void markShoppingCartAsDeleted(ShoppingCart shoppingCart) {
-        shoppingCart.delete();
-        shoppingCartRepository.save(shoppingCart);
     }
 
 }

@@ -24,11 +24,11 @@ public class ShoppingCartController {
         return ResponseEntity.ok(shoppingcartService.createShoppingCart(shoppingCartCreateRequest));
     }
 
-    // 쇼핑카트 조회
-    @GetMapping("/{id}")
+    // 쇼핑카트 사용자 id로 조회
+    @GetMapping("/")
     @ResponseBody
-    public ResponseEntity<ShoppingCartGetResponse> getShoppingCart(@PathVariable long id) {
-        return ResponseEntity.ok(shoppingcartService.findShoppingCart(id));
+    public ResponseEntity<ShoppingCartGetResponse> getShoppingCart(@RequestParam long userId) {
+        return ResponseEntity.ok(shoppingcartService.findShoppingCart(userId));
     }
 
     // 쇼핑카트 메뉴 추가

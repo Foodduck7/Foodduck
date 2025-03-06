@@ -1,6 +1,11 @@
-package com.example.foodduck.exception;
+package com.example.foodduck.exception.handler;
 
+import com.example.foodduck.exception.custom.ApplicationException;
+import com.example.foodduck.exception.custom.MinimumOrderAmountException;
+import com.example.foodduck.exception.custom.OutOfOrderTimeException;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.catalina.core.ApplicationContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
@@ -60,4 +66,11 @@ public class GlobalExceptionHandler {
                 .toList();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorList);
     }
+
+    // 사용자 정의 예외 처리
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<String> handleApplication(ApplicationException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
+    }
+
 }

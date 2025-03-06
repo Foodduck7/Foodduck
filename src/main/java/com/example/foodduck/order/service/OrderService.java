@@ -1,7 +1,7 @@
 package com.example.foodduck.order.service;
 
-import com.example.foodduck.exception.MinimumOrderAmountException;
-import com.example.foodduck.exception.OutOfOrderTimeException;
+import com.example.foodduck.exception.custom.MinimumOrderAmountException;
+import com.example.foodduck.exception.custom.OutOfOrderTimeException;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.order.dto.request.OrderCreateRequest;

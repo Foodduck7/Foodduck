@@ -1,6 +1,8 @@
-package com.example.foodduck.exception;
+package com.example.foodduck.exception.handler;
 
+import com.example.foodduck.exception.custom.ApplicationException;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.catalina.core.ApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -37,18 +39,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    // 주문 시간 외의 주문에 대한 예외처리: 403
-    @ExceptionHandler(OutOfOrderTimeException.class)
-    public ResponseEntity<String> handleOrderTimeException(OutOfOrderTimeException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
-    }
-
-    // 가게 최소 주문 금액 미만 주문에 대한 예외처리: 400
-    @ExceptionHandler(MinimumOrderAmountException.class)
-    public ResponseEntity<String> handleMinimumOrderAmountException(MinimumOrderAmountException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handleException(MethodArgumentNotValidException ex) {
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
@@ -57,4 +47,11 @@ public class GlobalExceptionHandler {
                 .toList();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorList);
     }
+
+    // 사용자 정의 예외 처리
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<String> handleApplication(ApplicationException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
+    }
+
 }

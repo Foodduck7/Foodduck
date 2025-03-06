@@ -1,4 +1,4 @@
-package com.example.foodduck.common.config.jwt.filter;
+package com.example.foodduck.common.filter;
 
 import com.example.foodduck.common.config.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;

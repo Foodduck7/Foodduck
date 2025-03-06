@@ -10,4 +10,6 @@ import java.util.List;
 public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findByOwnerAndStoreState(User owner, StoreState storeState);
     List<Store> findByNameContaining(String name);
+
+    String name(String name);
 }

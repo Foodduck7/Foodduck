@@ -28,17 +28,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
-                .requestMatchers("/users/logout").authenticated()
-                .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
-                .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
-                    .requestMatchers("/orders/request").hasRole("USER")
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); //필터 직접 등록
+                .csrf().disable()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
+                        .requestMatchers("/users/logout").authenticated()
+                        .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasRole("OWNER")
+                        .requestMatchers("/menus/{storeid}", "/menus/{menuId}/update", "menus/{menuId}/delete").hasRole("OWNER")
+                        .requestMatchers("/orders/request").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // hasAuthority("ROLE_ADMIN")을 사용하고 있어 관리자 접근이 차단됨. 수정
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); //필터 직접 등록
 
         return http.build();
     }

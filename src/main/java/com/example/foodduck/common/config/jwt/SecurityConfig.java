@@ -6,6 +6,7 @@ import com.example.foodduck.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,10 +31,18 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
+                .requestMatchers("/users/register", "/users/login", "menus/{menuId}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/stores/{storeId}/menus").permitAll()
                 .requestMatchers("/users/logout").authenticated()
-                .requestMatchers("/stores/**").hasAuthority("ROLE_OWNER")
-                .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
+                .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
+                .requestMatchers(
+                        "/menus/{storeid}",
+                        "/menus/{menuId}/update",
+                        "/menus/{menuId}/delete",
+                        "/menus/{menuId}/options",
+                        "/menus/options/{optionId}/update",
+                        "/menus/options/{optionId}/delete"
+                ).hasAuthority("ROLE_OWNER")
                     .requestMatchers("/orders/request").hasRole("USER")
                 .anyRequest().authenticated()
             )

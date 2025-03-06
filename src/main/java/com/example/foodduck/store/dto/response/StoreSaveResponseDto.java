@@ -9,7 +9,7 @@ import lombok.Getter;
 import java.time.LocalTime;
 
 @Getter
-public class StoreResponseDto {
+public class StoreSaveResponseDto {
 
     private final Long id;
     private final UserResponse owner;
@@ -22,7 +22,7 @@ public class StoreResponseDto {
     private final int orderCount;
     private final StoreState storeState;
 
-    public StoreResponseDto(Store store) {
+    public StoreSaveResponseDto(Store store) {
         this.id = store.getId();
         this.owner = new UserResponse(store.getOwner());
         this.name = store.getName();

@@ -1,15 +1,13 @@
 package com.example.foodduck.store.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
-import com.example.foodduck.menu.entity.Menu;
-import com.example.foodduck.order.entity.Order;
 import com.example.foodduck.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -41,6 +39,7 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private BreakState breakState;
 
+    @Setter
     @Column(nullable = false)
     private int likeCount = 0;
 
@@ -51,11 +50,8 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private StoreState storeState = StoreState.ACTIVE;
 
-//    @OneToMany(mappedBy = "store")
-//    private List<Menu> menus;
-//
-//    @OneToMany(mappedBy = "store")
-//    private List<Order> orders;
+    @Column(name = "notice_content", length=2000)
+    private String noticeContent;
 
     public Store(User owner, String name, int minOrderPrice, LocalTime openTime, LocalTime closeTime, BreakState breakState) {
         this.owner = owner;
@@ -73,11 +69,16 @@ public class Store extends BaseEntity {
         this.id = storeId;
     }
 
-    public void update(String name, int minOrderPrice, LocalTime openTime, LocalTime closeTime, BreakState breakState) {
+    public void update(String name, int minOrderPrice, LocalTime openTime, LocalTime closeTime, BreakState breakState, StoreState storeState) {
         this.name = name;
         this.minOrderPrice = minOrderPrice;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.breakState = breakState;
+        this.storeState = storeState;
+    }
+
+    public void updateNoticeContent(String noticeContent) {
+        this.noticeContent = noticeContent;
     }
 }

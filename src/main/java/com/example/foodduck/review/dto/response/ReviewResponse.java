@@ -13,8 +13,9 @@ package com.example.foodduck.review.dto.response;
 import java.math.BigInteger;
 
 import com.example.foodduck.review.entity.Review;
+import lombok.Getter;
 
-
+@Getter
 public class ReviewResponse {
 
     private final Long id;

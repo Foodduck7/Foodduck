@@ -5,6 +5,7 @@ import com.example.foodduck.menu.dto.request.MenuUpdateRequest;
 import com.example.foodduck.menu.dto.response.MenuCreateResponse;
 import com.example.foodduck.menu.dto.response.MenuResponse;
 import com.example.foodduck.menu.dto.response.MenuUpdateResponse;
+import com.example.foodduck.menu.dto.response.MenuWithOptionResponse;
 import com.example.foodduck.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class MenuController {
     }
 
     @GetMapping("/menus/{menuId}")
-    public ResponseEntity<MenuResponse> getMenu(@PathVariable Long menuId) {
+    public ResponseEntity<MenuWithOptionResponse> getMenu(@PathVariable Long menuId) {
         return ResponseEntity.ok(menuService.getMenu(menuId));
     }
 

@@ -20,17 +20,6 @@ public class MenuOptionUpdateResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public MenuOptionUpdateResponse(Long id, Long menuId, String optionName, String contents, int optionPrice, OptionStatus optionStatus, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.menuId = menuId;
-        this.optionName = optionName;
-        this.contents = contents;
-        this.optionPrice = optionPrice;
-        this.optionStatus = optionStatus;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
     public static MenuOptionUpdateResponse toDto(MenuOption menuOption) {
         return MenuOptionUpdateResponse.builder()
                 .id(menuOption.getId())

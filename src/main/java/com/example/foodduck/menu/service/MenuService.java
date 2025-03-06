@@ -3,10 +3,10 @@ package com.example.foodduck.menu.service;
 import com.example.foodduck.exception.InvalidCredentialException;
 import com.example.foodduck.menu.dto.request.MenuCreateRequest;
 import com.example.foodduck.menu.dto.request.MenuUpdateRequest;
-import com.example.foodduck.menu.dto.response.MenuCreateResponse;
-import com.example.foodduck.menu.dto.response.MenuResponse;
-import com.example.foodduck.menu.dto.response.MenuUpdateResponse;
+import com.example.foodduck.menu.dto.response.*;
 import com.example.foodduck.menu.entity.Menu;
+import com.example.foodduck.menu.entity.MenuOption;
+import com.example.foodduck.menu.repository.MenuOptionRepository;
 import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.store.repository.StoreRepository;
@@ -33,6 +33,7 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final MenuOptionRepository menuOptionRepository;
 
     @Transactional
     public MenuCreateResponse createMenu(Long storeId, MenuCreateRequest menuCreateRequest) {
@@ -76,11 +77,13 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public MenuResponse getMenu(Long menuId) {
+    public MenuWithOptionResponse getMenu(Long menuId) {
 
         Menu findMenu = findMenuOrElseThrow(menuId);
 
-        return MenuResponse.toDto(findMenu);
+        List<MenuOption> menuOptions = menuOptionRepository.findAllByMenuId(findMenu.getId());
+
+        return MenuWithOptionResponse.toDto(findMenu, menuOptions);
     }
 
     @Transactional

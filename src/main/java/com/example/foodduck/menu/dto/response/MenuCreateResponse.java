@@ -20,17 +20,6 @@ public class MenuCreateResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public MenuCreateResponse(Long id, Long storeId, String menuName, int price,String category, MenuState menuState, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.storeId = storeId;
-        this.menuName = menuName;
-        this.price = price;
-        this.category =category;
-        this.menuState = menuState;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
     public static MenuCreateResponse toDto(Menu menu) {
         return MenuCreateResponse.builder()
                 .id(menu.getId())

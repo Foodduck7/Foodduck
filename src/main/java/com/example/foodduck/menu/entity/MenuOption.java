@@ -28,6 +28,7 @@ public class MenuOption extends BaseEntity {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
+
     public MenuOption(String optionName, String contents, int optionPrice, Menu menu) {
         this.optionName = optionName;
         this.contents = contents;

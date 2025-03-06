@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.example.foodduck.menu.entity.MenuState.ON_SALE;
 import static com.example.foodduck.menu.entity.MenuState.REMOVED;
 
@@ -32,6 +35,9 @@ public class Menu extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
+
+    @OneToMany(mappedBy =  "menu",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<MenuOption> menuOptionList = new ArrayList<>();
 
     public Menu(Long menuId) {
         this.id = menuId;

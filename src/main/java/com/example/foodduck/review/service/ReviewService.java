@@ -68,7 +68,7 @@ public class ReviewService {
     /*
         리뷰 조회 매서드
     */
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<ReviewResponse> findAllReviewByStore(Long storeId, int page, int size){
         Pageable pageable = PageRequest.of( (page > 0) ? page - 1 : 0, size, Sort.by("updatedAt").descending());
         Page<Review> reviewPage = reviewRepository.findAllReviewByStore(storeId, pageable);

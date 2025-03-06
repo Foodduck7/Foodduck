@@ -1,7 +1,11 @@
 package com.example.foodduck.order.repository;
 
+import com.example.foodduck.exception.custom.ApplicationException;
 import com.example.foodduck.order.entity.Order;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -15,6 +19,10 @@ import java.time.LocalDateTime;
  */
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
+    default Order findOrderById(Long id) {
+        return findById(id).orElseThrow(() -> new ApplicationException("해당 주문은 존재 안함", HttpStatus.BAD_REQUEST));
+    }
     /**
      * @author 문성준
      * @version 25.03.06 17:36

@@ -1,6 +1,8 @@
-package com.example.foodduck.exception;
+package com.example.foodduck.exception.handler;
 
+import com.example.foodduck.exception.custom.ApplicationException;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.catalina.core.ApplicationContext;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
-        System.out.println(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
     }
 
@@ -34,18 +35,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    // 주문 시간 외의 주문에 대한 예외처리: 403
-    @ExceptionHandler(OutOfOrderTimeException.class)
-    public ResponseEntity<String> handleOrderTimeException(OutOfOrderTimeException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
-    }
-
-    // 가게 최소 주문 금액 미만 주문에 대한 예외처리: 400
-    @ExceptionHandler(MinimumOrderAmountException.class)
-    public ResponseEntity<String> handleMinimumOrderAmountException(MinimumOrderAmountException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handleException(MethodArgumentNotValidException ex) {
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
@@ -55,14 +44,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldErrorList);
     }
 
-    // 장바구니와 메뉴의 가게가 일치하지 않을 경우에 대한 예외처리: 400
-    @ExceptionHandler(StoreMismatchException.class)
-    public ResponseEntity<String> handleStoreMismatchException(StoreMismatchException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    // 사용자 정의 예외 처리
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<String> handleApplication(ApplicationException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ex.getMessage());
     }
 
-    @ExceptionHandler(ExpiredShoppingCartException.class)
-    public ResponseEntity<String> handleExpiredShoppingCartException(ExpiredShoppingCartException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
 }

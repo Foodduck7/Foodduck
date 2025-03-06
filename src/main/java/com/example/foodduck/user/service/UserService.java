@@ -1,7 +1,7 @@
 package com.example.foodduck.user.service;
 
 import com.example.foodduck.common.config.jwt.JwtUtil;
-import com.example.foodduck.exception.InvalidCredentialException;
+import com.example.foodduck.exception.custom.InvalidCredentialException;
 import com.example.foodduck.user.dto.request.UserJoinRequest;
 import com.example.foodduck.user.dto.request.UserLoginRequest;
 import com.example.foodduck.user.dto.request.UserPasswordUpdateRequest;

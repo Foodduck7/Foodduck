@@ -1,6 +1,6 @@
 package com.example.foodduck.common.config.jwt;
 
-import com.example.foodduck.common.config.jwt.filter.JwtAuthenticationFilter;
+import com.example.foodduck.common.filter.JwtAuthenticationFilter;
 import com.example.foodduck.user.entity.User;
 import com.example.foodduck.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.foodduck.menu.service;
 
-import com.example.foodduck.exception.InvalidCredentialException;
+import com.example.foodduck.exception.custom.InvalidCredentialException;
 import com.example.foodduck.menu.dto.request.MenuCreateRequest;
 import com.example.foodduck.menu.dto.request.MenuUpdateRequest;
 import com.example.foodduck.menu.dto.response.MenuCreateResponse;

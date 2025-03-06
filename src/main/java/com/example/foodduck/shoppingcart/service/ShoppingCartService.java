@@ -1,7 +1,6 @@
 package com.example.foodduck.shoppingcart.service;
 
-import com.example.foodduck.exception.ExpiredShoppingCartException;
-import com.example.foodduck.exception.StoreMismatchException;
+import com.example.foodduck.exception.custom.StoreMismatchException;
 import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.menu.repository.MenuRepository;
 import com.example.foodduck.shoppingcart.dto.request.ShoppingCartAddRequest;

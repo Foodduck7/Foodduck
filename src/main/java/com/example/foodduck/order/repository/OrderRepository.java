@@ -1,6 +1,6 @@
 package com.example.foodduck.order.repository;
 
-import com.example.foodduck.exception.ApplicationException;
+import com.example.foodduck.exception.custom.ApplicationException;
 import com.example.foodduck.order.entity.Order;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -38,7 +38,7 @@ public class ReviewController {
             @RequestBody ReviewRequest reviewRequest){
         ReviewResponse reviewResponse = reviewService.saveReview(orderId, reviewRequest);
 
-        return new ResponseEntity<>(reviewResponse, HttpStatus.OK); // status 200
+        return new ResponseEntity<>(reviewResponse, HttpStatus.CREATED); // status 201
     }
 
 

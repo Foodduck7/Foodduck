@@ -5,6 +5,7 @@ import com.example.foodduck.exception.custom.OutOfOrderTimeException;
 import com.example.foodduck.order.dto.request.OrderCreateRequest;
 import com.example.foodduck.order.dto.request.OrderUpdateRequest;
 import com.example.foodduck.order.dto.response.OrderGetResponse;
+import com.example.foodduck.order.dto.response.OrderMenusResponse;
 import com.example.foodduck.order.dto.response.OrderResponse;
 import com.example.foodduck.order.entity.Order;
 import com.example.foodduck.order.entity.OrderMenu;
@@ -71,14 +72,17 @@ public class OrderService {
 
     // 주문 조회 메서드
     @Transactional(readOnly = true)
-    public OrderGetResponse findOrder(Long id) {
-        Order foundOrder = orderRepository.findById(id)
+    public OrderGetResponse findOrder(Long orderId) {
+        Order foundOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order Not Found"));
         // 주문 총 금액
         BigDecimal totalAmount = foundOrder.getOrderMenus().stream()
                 .map(om -> BigDecimal.valueOf(om.getMenu().getPrice()).multiply(BigDecimal.valueOf(om.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new OrderGetResponse(foundOrder.getId(), foundOrder.getStore().getId(), foundOrder.getOrderStatus(), foundOrder.getOrderMenus(), totalAmount);
+        List<OrderMenusResponse> orderMenusResponses = foundOrder.getOrderMenus().stream()
+                .map(o -> new OrderMenusResponse(o.getId(), o.getOrder().getId(), o.getMenu().getId(), o.getQuantity(), o.getPrice()))
+                .toList();
+        return new OrderGetResponse(foundOrder.getId(), foundOrder.getStore().getId(), foundOrder.getOrderStatus(), orderMenusResponses, totalAmount);
     }
 
     // 주문 상태 수정 메서드

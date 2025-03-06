@@ -32,7 +32,7 @@ public class OrderMenu extends BaseEntity {
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
-        this.price = menu.getPrice() * quantity;
+        this.price = menu.getPrice();
     }
 
 }

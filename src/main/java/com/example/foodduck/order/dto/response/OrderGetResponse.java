@@ -10,10 +10,10 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class OrderGetResponse {
+public class OrderGetResponse{
     private Long id;
     private Long storeId;
     private OrderStatus orderStatus;
-    private List<OrderMenu> orderMenus;
+    private List<OrderMenusResponse> orderMenusResponses;
     private BigDecimal totalAmount;
 }

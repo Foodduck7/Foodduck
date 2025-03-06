@@ -28,21 +28,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
-                    .requestMatchers("/users/logout").authenticated()
-                    .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
-                    .requestMatchers("/menus/{storeid}","/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
-                    .requestMatchers("/orders/request").hasAuthority("ROLE_USER")
-                    .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasAuthority("ROLE_USER")
-                    .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); //필터 직접 등록
+                .csrf().disable()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
+                        .requestMatchers("/users/logout").authenticated()
+                        .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
+                        .requestMatchers("/menus/{storeid}", "/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
+                        .requestMatchers("/orders/request").hasAuthority("ROLE_USER")
+                        .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasAuthority("ROLE_USER")
+                        .requestMatchers(
+                                "/menus/{storeid}",
+                                "/menus/{menuId}/update",
+                                "/menus/{menuId}/delete",
+                                "/menus/{menuId}/options",
+                                "/menus/options/{optionId}/update",
+                                "/menus/options/{optionId}/delete"
+                        ).hasAuthority("ROLE_OWNER")
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); //필터 직접 등록
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

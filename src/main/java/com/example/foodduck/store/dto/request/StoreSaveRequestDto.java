@@ -4,11 +4,15 @@ import com.example.foodduck.store.entity.BreakState;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoreSaveRequestDto {
 
     @NotBlank(message = "가게 이름은 필수입니다.")

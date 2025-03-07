@@ -1,8 +1,10 @@
 package com.example.foodduck.common.config.jwt;
 
+
 import com.example.foodduck.common.filter.JwtAuthenticationFilter;
 import com.example.foodduck.user.entity.User;
 import com.example.foodduck.user.repository.UserRepository;
+import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,11 +32,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/shoppingCarts/{id}/orders/{orderId}").permitAll()
                         .requestMatchers("/users/register", "/users/login", "menus", "menus/{menuId}").permitAll()
                         .requestMatchers("/users/logout").authenticated()
+                        .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasRole("OWNER")
+                        .requestMatchers("/menus/{storeid}", "/menus/{menuId}/update", "menus/{menuId}/delete").hasRole("OWNER")
+                        .requestMatchers("/orders/request").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // hasAuthority("ROLE_ADMIN")을 사용하고 있어 관리자 접근이 차단됨. 수정
+                        .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasRole("USER")
                         .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
                         .requestMatchers("/menus/{storeid}", "/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
                         .requestMatchers("/shoppingCarts/{id}/orders/request").hasAuthority("ROLE_USER")
@@ -48,7 +54,7 @@ public class SecurityConfig {
                                 "/menus/{menuId}/options",
                                 "/menus/options/{optionId}/update",
                                 "/menus/options/{optionId}/delete"
-                        ).hasAuthority("ROLE_OWNER")
+                        ).hasRole("OWNER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -83,7 +89,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() { //필터를Bean으로 등록
+    public Filter jwtAuthenticationFilter() { //필터를Bean으로 등록
         return new JwtAuthenticationFilter(jwtUtil, userDetailsService);
     }
 }

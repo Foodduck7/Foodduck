@@ -1,11 +1,13 @@
 package com.example.foodduck.exception.handler;
 
 import com.example.foodduck.exception.custom.ApplicationException;
+import com.example.foodduck.exception.custom.MinimumOrderAmountException;
+import com.example.foodduck.exception.custom.OutOfOrderTimeException;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.catalina.core.ApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -23,11 +25,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
+    /*
+    03.06.18:28, 관리자 대시보드 테스트 시, 500eroor 따라서, 뭐 때문인지 찍어보려고 수정.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
-        log.info(ex.getClass().toString());
-        log.info(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+        Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+        logger.error("서버 오류 발생: ", ex); //로그에 예외 메시지 출력
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생: " + ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -37,6 +42,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<String> handleBadRequestException(BadRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    // 주문 시간 외의 주문에 대한 예외처리: 403
+    @ExceptionHandler(OutOfOrderTimeException.class)
+    public ResponseEntity<String> handleOrderTimeException(OutOfOrderTimeException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    // 가게 최소 주문 금액 미만 주문에 대한 예외처리: 400
+    @ExceptionHandler(MinimumOrderAmountException.class)
+    public ResponseEntity<String> handleMinimumOrderAmountException(MinimumOrderAmountException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 

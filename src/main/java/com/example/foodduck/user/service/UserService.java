@@ -14,6 +14,8 @@ import com.example.foodduck.user.repository.RefreshTokenRepository;
 import com.example.foodduck.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +30,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+
     //회원 가입
     public UserResponse registerUser(UserJoinRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
+            logger.error("회원가입 실패: 이미 존재하는 이메일입니다");
             throw new IllegalArgumentException("이미 존재하는 이메일입니다");
         }
         // owner랑 user만 되도록 세팅해놔서 admin 을 거부하고 있어서 추가해줘야함. 또한, user를 기본값으로 세팅.
@@ -50,6 +56,7 @@ public class UserService {
 
 
         userRepository.save(user);
+        logger.info("회원가입 성공: " + request.getEmail());
         return new UserResponse(user);
     }
 

@@ -8,10 +8,12 @@ import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,6 +41,12 @@ public class SecurityConfig {
                         .requestMatchers("/orders/request").hasRole("USER")
                         .requestMatchers("/admin/**").hasRole("ADMIN") // hasAuthority("ROLE_ADMIN")을 사용하고 있어 관리자 접근이 차단됨. 수정
                         .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasRole("USER")
+                        .requestMatchers("/stores/{userId}", "/stores/{storeId}").hasAuthority("ROLE_OWNER")
+                        .requestMatchers("/menus/{storeid}", "/menus/{menuId}/update", "menus/{menuId}/delete").hasAuthority("ROLE_OWNER")
+                        .requestMatchers("/shoppingCarts/{id}/orders/request").hasAuthority("ROLE_USER")
+                        .requestMatchers("/shoppingCarts/create", "/shoppingCarts/add", "/shoppingCarts/remove").hasAuthority("ROLE_USER")
+                        .requestMatchers("/shoppingCarts/{id}/orders/status").hasAuthority("ROLE_OWNER")
+                        .requestMatchers(HttpMethod.DELETE, "/shoppingCarts/{id}/orders/{orderId}").hasAuthority("ROLE_OWNER")
                         .requestMatchers(
                                 "/menus/{storeid}",
                                 "/menus/{menuId}/update",

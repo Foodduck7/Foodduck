@@ -24,8 +24,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static java.lang.String.valueOf;
-
 @RequiredArgsConstructor
 @Service
 public class ShoppingCartService {
@@ -64,7 +62,7 @@ public class ShoppingCartService {
         //메뉴 총 가격
         BigDecimal totalAmount = cartMenus.stream()
                 .filter(cartMenu -> cartMenu.getMenu() != null)
-                .map(cartMenu -> BigDecimal.valueOf(cartMenu.getMenu().getPrice()))
+                .map(cartMenu -> BigDecimal.valueOf(cartMenu.getMenu().getPrice()).multiply(BigDecimal.valueOf(cartMenu.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         // 배송비
         BigDecimal deliveryFee = foundShoppingCart.getDeliveryFee();

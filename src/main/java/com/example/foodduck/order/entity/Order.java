@@ -1,13 +1,15 @@
 package com.example.foodduck.order.entity;
 
 import com.example.foodduck.common.entity.BaseEntity;
-import com.example.foodduck.menu.entity.Menu;
 import com.example.foodduck.order.status.OrderStatus;
 import com.example.foodduck.store.entity.Store;
 import com.example.foodduck.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 주문 정보를 저장하는 entity
@@ -24,27 +26,30 @@ public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "menu_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Menu menu;
-
-    @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderMenu> orderMenus = new ArrayList<>();
 
     // 주문 상태: 기본값 요청 상태
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus = OrderStatus.REQUESTED;
 
-    public Order(User user, Menu menu, Store store, OrderStatus orderStatus) {
+    // 장바구니 메뉴 추가 메서드
+    public void setMenus(List<OrderMenu> orderMenus) {
+        this.orderMenus = orderMenus;
+    }
+
+    public Order(User user, Store store, OrderStatus orderStatus) {
         this.user = user;
-        this.menu = menu;
         this.store = store;
         this.orderStatus = orderStatus;
     }

@@ -4,7 +4,6 @@ import com.example.foodduck.exception.custom.ApplicationException;
 import com.example.foodduck.exception.custom.MinimumOrderAmountException;
 import com.example.foodduck.exception.custom.OutOfOrderTimeException;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.catalina.core.ApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;

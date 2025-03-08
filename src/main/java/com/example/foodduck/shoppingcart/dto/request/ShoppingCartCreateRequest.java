@@ -1,8 +1,10 @@
 package com.example.foodduck.shoppingcart.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 @Getter
 public class ShoppingCartCreateRequest {
     @NotNull(message = "사용자 id값 입력은 필수입니다")
